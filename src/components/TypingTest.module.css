@@ -56,9 +56,9 @@
 .wordsContainer {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.8rem;
+    gap: 1.2rem;
     /* Space between words */
-    font-size: 1.7rem;
+    font-size: 2.5rem;
     /* Large readable text */
     line-height: 1.5;
     user-select: none;
@@ -126,7 +126,7 @@
 }
 
 .finalWpm {
-    font-size: 4rem;
+    font-size: 6rem;
     color: var(--main-color);
     font-weight: bold;
 }
@@ -138,17 +138,19 @@
 }
 
 .restartBtn {
-    background-color: var(--sub-color);
-    color: var(--bg-color);
+    background-color: var(--main-color);
+    color: white;
     border: none;
-    padding: 0.5rem 1rem;
+    padding: 0.8rem 2rem;
     font-size: 1.2rem;
     cursor: pointer;
-    border-radius: 4px;
+    border-radius: 8px;
+    transition: opacity 0.2s;
+    margin-top: 2rem;
 }
 
 .restartBtn:hover {
-    background-color: var(--text-color);
+    opacity: 0.9;
 }
 
 .instruction {

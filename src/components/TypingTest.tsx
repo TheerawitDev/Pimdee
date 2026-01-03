@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTypingEngine } from "@/hooks/useTypingEngine";
+import { Difficulty } from "@/lib/dictionaries";
 import styles from "./TypingTest.module.css";
 
 export default function TypingTest() {
@@ -68,37 +69,21 @@ export default function TypingTest() {
 
                     <div className={styles.divider}>|</div>
 
-                    <button
-                        className={`${styles.modeBtn} ${difficulty === 'starter' ? styles.active : ''}`}
-                        onClick={() => { setDifficulty('starter'); resetGame(); }}
-                    >
-                        Lvl 1
-                    </button>
-                    <button
-                        className={`${styles.modeBtn} ${difficulty === 'elementary' ? styles.active : ''}`}
-                        onClick={() => { setDifficulty('elementary'); resetGame(); }}
-                    >
-                        Lvl 2
-                    </button>
-                    <button
-                        className={`${styles.modeBtn} ${difficulty === 'intermediate' ? styles.active : ''}`}
-                        onClick={() => { setDifficulty('intermediate'); resetGame(); }}
-                    >
-                        Lvl 3
-                    </button>
-                    <button
-                        className={`${styles.modeBtn} ${difficulty === 'advanced' ? styles.active : ''}`}
-                        onClick={() => { setDifficulty('advanced'); resetGame(); }}
-                    >
-                        Lvl 4
-                    </button>
-                    <button
-                        className={`${styles.modeBtn} ${difficulty === 'master' ? styles.active : ''}`}
-                        onClick={() => { setDifficulty('master'); resetGame(); }}
-                        title="Master"
-                    >
-                        Lvl 5
-                    </button>
+                    {[
+                        { id: 'starter', en: 'Beginner', th: 'เริ่มต้น' },
+                        { id: 'elementary', en: 'Elementary', th: 'พื้นฐาน' },
+                        { id: 'intermediate', en: 'Intermediate', th: 'ปานกลาง' },
+                        { id: 'advanced', en: 'Advanced', th: 'สูง' },
+                        { id: 'master', en: 'Master', th: 'เชี่ยวชาญ' }
+                    ].map((lvl) => (
+                        <button
+                            key={lvl.id}
+                            className={`${styles.modeBtn} ${difficulty === lvl.id ? styles.active : ''}`}
+                            onClick={() => { setDifficulty(lvl.id as Difficulty); resetGame(); }}
+                        >
+                            {language === 'thai' ? lvl.th : lvl.en}
+                        </button>
+                    ))}
                 </div>
 
                 {gameState === 'start' || gameState === 'finish' ? (
