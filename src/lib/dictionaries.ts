@@ -1,45 +1,59 @@
-export type Difficulty = 'starter' | 'normal' | 'expert';
+export type Difficulty = 'starter' | 'elementary' | 'intermediate' | 'advanced' | 'master';
 export type Language = 'english' | 'thai';
 
 export const dictionaries: Record<Language, Record<Difficulty, string[]>> = {
     english: {
-        starter: [
-            "the", "be", "to", "of", "and", "a", "in", "that", "have", "i",
-            "it", "for", "not", "on", "with", "he", "as", "you", "do", "at",
-            "this", "but", "his", "by", "from", "they", "we", "say", "her", "she",
-            "or", "an", "will", "my", "one", "all", "would", "there", "their", "what",
-            "cat", "dog", "run", "eat", "play", "sleep", "walk", "book", "pen", "home"
+        starter: [ // Level 1: Very basic (3-4 letters)
+            "ant", "bat", "cat", "dog", "egg", "fan", "gun", "hat", "ice", "jar",
+            "key", "log", "man", "net", "owl", "pen", "rat", "sun", "top", "run",
+            "sky", "box", "car", "bus", "cup", "bed", "fox", "gem", "hen", "ink"
         ],
-        normal: [
-            "about", "search", "other", "information", "time", "service", "people", "year", "see",
-            "first", "new", "work", "part", "take", "get", "place", "made", "live", "where",
-            "after", "back", "little", "only", "round", "man", "year", "came", "show", "every",
-            "good", "me", "give", "our", "under", "name", "very", "through", "just", "form",
-            "sentence", "great", "think", "say", "help", "low", "line", "differ", "turn", "cause",
-            "much", "mean", "before", "move", "right", "boy", "old", "too", "same", "she"
+        elementary: [ // Level 2: Common daily words
+            "apple", "bread", "chair", "dance", "earth", "fruit", "grass", "house", "image", "juice",
+            "knife", "lemon", "money", "night", "ocean", "paper", "queen", "river", "sugar", "table",
+            "uncle", "video", "water", "zebra", "cloud", "dream", "funny", "happy", "light", "music"
         ],
-        expert: [
-            "phenomenon", "conscientious", "definitely", "embarrassment", "florescent", "government",
-            "harass", "interrupt", "millennium", "pharaoh", "publicly", "separate", "successful",
-            "tomorrow", "weird", "accommodate", "bureaucracy", "cemetery", "discipline", "exhilarate",
-            "grateful", "humorous", "judgment", "license", "maintenance", "necessary", "parliament",
-            "privilege", "questionnaire", "rhythm", "sovereign", "unforeseen", "vocabulary", "xenophobia"
+        intermediate: [ // Level 3: Standard mixed
+            "airport", "battery", "captain", "diamond", "economy", "factory", "gallery", "history", "journey", "kitchen",
+            "library", "morning", "natural", "opinion", "picture", "quality", "regular", "station", "teacher", "uniform",
+            "village", "weather", "yellow", "behave", "camera", "danger", "energy", "family", "garden", "health"
+        ],
+        advanced: [ // Level 4: Complex/Longer
+            "absolutely", "basketball", "candidate", "depression", "experience", "foundation", "generation", "helicopter", "impossible", "journalist",
+            "laboratory", "management", "negotiation", "opportunity", "percentage", "reputation", "scientific", "television", "university", "vocabulary",
+            "wonderfully", "yesterday", "background", "challenges", "department", "everything", "friendship", "government", "historical", "literature"
+        ],
+        master: [ // Level 5: Technical/Academic/Obscure
+            "acquaintance", "benevolent", "cacophony", "debilitating", "eccentricity", "fastidious", "grandiloquent", "hypothetical", "idiosyncrasy", "juxtaposition",
+            "kaleidoscope", "lugubrious", "magnanimous", "nonchalant", "obfuscation", "paraphernalia", "quintessential", "recalcitrant", "schadenfreude", "theoretical",
+            "ubiquitous", "verisimilitude", "whimsical", "xenophobic", "yielding", "zealousness", "bureaucracy", "consciousness", "disproportionate", "entrepreneurial"
         ]
     },
     thai: {
-        starter: [
-            "กิน", "นอน", "เล่น", "เดิน", "ไป", "มา", "ดี", "ใจ", "รัก", "แมว",
-            "หมา", "นก", "ปลา", "บ้าน", "รถ", "ยา", "ตา", "หู", "มือ", "ดู"
+        starter: [ // Level 1: Basic words, no complex vowels
+            "กา", "ตา", "มา", "งู", "ปู", "ดู", "ดี", "ตี", "มี", "รู",
+            "นา", "ลา", "พา", "ชา", "ยา", "ขา", "ทา", "หา", "อา", "ปี",
+            "ใจ", "ใน", "ใบ", "ใส", "ไป", "ไว", "ไร", "ไถ", "ไต", "ไฟ"
         ],
-        normal: [
-            "ทำงาน", "หนังสือ", "โรงเรียน", "อาหาร", "เพื่อน", "ครอบครัว", "ความสุข", "เวลา", "ชีวิต", "วันนี้",
-            "พรุ่งนี้", "เมื่อวาน", "เดือน", "ปี", "ประเทศไทย", "ภาษา", "เรียน", "เขียน", "อ่าน", "ฟัง",
-            "ดนตรี", "กีฬา", "ท่องเที่ยว", "ธรรมชาติ", "ภูเขา", "ทะเล", "ท้องฟ้า", "สายลม", "แสงแดด", "ดอกไม้"
+        elementary: [ // Level 2: Common words, simple tones
+            "บ้าน", "ร้าน", "ช้าง", "ม้า", "ข้าว", "น้ำ", "ไม้", "มือ", "เท้า", "ปาก",
+            "ผม", "ลม", "ฝน", "ฟ้า", "ดิน", "หิน", "ทราย", "ดวง", "ดาว", "เดือน",
+            "แม่", "พ่อ", "พี่", "น้อง", "ป้า", "ลุง", "ย่า", "ยาย", "ตา", "ปู่"
         ],
-        expert: [
-            "กาลเทศะ", "ขะมักเขม้น", "จินตนาการ", "ฉรรพรรณรังสี", "ทรัพยากร", "ธรรมเนียม", "บรรณารักษ์",
-            "ประพฤติ", "พฤติกรรม", "มหาวิทยาลัย", "ยุทธศาสตร์", "รัฐธรรมนูญ", "วัฒนธรรม", "ศตวรรษ", "สัญลักษณ์",
-            "อุตสาหกรรม", "ปรากฏการณ์", "พิจารณา", "วิวัฒนาการ", "สมรรถภาพ", "อารยธรรม", "อิทธิพล", "เอกลักษณ์"
+        intermediate: [ // Level 3: Mixed difficulty
+            "โรงเรียน", "หนังสือ", "ปากกา", "ดินสอ", "ยางลบ", "กระเป๋า", "รองเท้า", "ถุงเท้า", "เสื้อผ้า", "นาดฬิกา",
+            "อาหาร", "ผลไม้", "ผักสด", "ขนม", "น้ำดื่ม", "กาแฟ", "ชาเย็น", "นมสด", "ก๋วยเตี๋ยว", "ข้าวผัด",
+            "สมุด", "บัญชี", "ธนาคาร", "เงิน", "ทอง", "ราคา", "ขาย", "ซื้อ", "ตลาด", "ห้าง"
+        ],
+        advanced: [ // Level 4: Complex spelling/tones
+            "กาลเทศะ", "ขะมักเขม้น", "ธรรมชาติ", "วัฒนธรรม", "ประเพณี", "สัญลักษณ์", "มหาวิทยาลัย", "วิทยาศาสตร์", "คณิตศาสตร์", "ประวัติศาสตร์",
+            "ภูมิศาสตร์", "สังคมศึกษา", "ศาสนา", "ศีลธรรม", "จริยธรรม", "พลศึกษา", "สุขศึกษา", "ศิลปะ", "ดนตรี", "นาฏศิลป์",
+            "ภาพยนตร์", "โทรทัศน์", "วิทยุ", "หนังสือพิมพ์", "อินเทอร์เน็ต", "คอมพิวเตอร์", "เทคโนโลยี", "นวัตกรรม", "เศรษฐกิจ", "การเมือง"
+        ],
+        master: [ // Level 5: Academic/Royal/Rare
+            "กิตติมศักดิ์", "โกศล", "ขวนขวาย", "คณาจารย์", "งบประมาณ", "จินตนาการ", "ฉรรพรรณรังสี", "ชลประทาน", "ณัฏฐ์", "ดุษฎีนิพนธ์",
+            "ตรรกศาสตร์", "ถาวรวัตถุ", "ทฤษฎีบท", "ธรณีวิทยา", "นิทรรศการ", "บรรณารักษ์", "ปฏิสัมพันธ์", "พฤติกรรมศาสตร์", "ภราดรภาพ", "มลภาวะ",
+            "ยุทธศาสตร์", "รัตนโกสินทร์", "วรรณกรรม", "ศตวรรษ", "สถาปัตยกรรม", "หัตถกรรม", "อนารยชน", "อุตสาหกรรม", "อาชญากรรม", "เอกลักษณ์"
         ]
     }
 };

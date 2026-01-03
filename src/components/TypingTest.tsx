@@ -72,25 +72,38 @@ export default function TypingTest() {
                         className={`${styles.modeBtn} ${difficulty === 'starter' ? styles.active : ''}`}
                         onClick={() => { setDifficulty('starter'); resetGame(); }}
                     >
-                        Starter
+                        Lvl 1
                     </button>
                     <button
-                        className={`${styles.modeBtn} ${difficulty === 'normal' ? styles.active : ''}`}
-                        onClick={() => { setDifficulty('normal'); resetGame(); }}
+                        className={`${styles.modeBtn} ${difficulty === 'elementary' ? styles.active : ''}`}
+                        onClick={() => { setDifficulty('elementary'); resetGame(); }}
                     >
-                        Normal
+                        Lvl 2
                     </button>
                     <button
-                        className={`${styles.modeBtn} ${difficulty === 'expert' ? styles.active : ''}`}
-                        onClick={() => { setDifficulty('expert'); resetGame(); }}
+                        className={`${styles.modeBtn} ${difficulty === 'intermediate' ? styles.active : ''}`}
+                        onClick={() => { setDifficulty('intermediate'); resetGame(); }}
                     >
-                        Expert
+                        Lvl 3
+                    </button>
+                    <button
+                        className={`${styles.modeBtn} ${difficulty === 'advanced' ? styles.active : ''}`}
+                        onClick={() => { setDifficulty('advanced'); resetGame(); }}
+                    >
+                        Lvl 4
+                    </button>
+                    <button
+                        className={`${styles.modeBtn} ${difficulty === 'master' ? styles.active : ''}`}
+                        onClick={() => { setDifficulty('master'); resetGame(); }}
+                        title="Master"
+                    >
+                        Lvl 5
                     </button>
                 </div>
 
                 {gameState === 'start' || gameState === 'finish' ? (
                     <div className={styles.stats}>
-                        {wpm} wpm / {accuracy}% acc
+                        {wpm} <span style={{ fontSize: '0.8em', opacity: 0.7 }}>wpm</span>
                     </div>
                 ) : null}
             </div>
@@ -104,7 +117,6 @@ export default function TypingTest() {
                     <div key={wIdx} className={styles.word}>
                         {word.letters.map((letter, lIdx) => {
                             const isCursor = cursorIndex.wordIndex === wIdx && cursorIndex.letterIndex === lIdx;
-                            const isWordActive = cursorIndex.wordIndex === wIdx;
 
                             let className = styles.letter;
                             if (letter.status === 'correct') className += ` ${styles.correct}`;
@@ -121,11 +133,19 @@ export default function TypingTest() {
                 ))}
             </div>
 
-            {/* Results Screen (Simple Overlay) */}
+            {/* Results Screen (Overlay) */}
             {gameState === 'finish' && (
                 <div className={styles.results}>
-                    <div className={styles.finalWpm}>{wpm}</div>
-                    <div className={styles.label}>wpm</div>
+                    <div className={styles.resultGroup}>
+                        <div>
+                            <div className={styles.resultValue}>{wpm}</div>
+                            <div className={styles.resultLabel}>wpm</div>
+                        </div>
+                        <div>
+                            <div className={styles.resultValue}>{accuracy}%</div>
+                            <div className={styles.resultLabel}>acc</div>
+                        </div>
+                    </div>
                     <button className={styles.restartBtn} onClick={resetGame}>Restart (Tab)</button>
                 </div>
             )}

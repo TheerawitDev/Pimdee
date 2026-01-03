@@ -16,7 +16,7 @@ export interface Word {
 
 export const useTypingEngine = () => {
     const [language, setLanguage] = useState<Language>('english');
-    const [difficulty, setDifficulty] = useState<Difficulty>('normal');
+    const [difficulty, setDifficulty] = useState<Difficulty>('elementary');
     const [words, setWords] = useState<Word[]>([]);
     const [gameState, setGameState] = useState<TypingState>('idle');
     const [cursorIndex, setCursorIndex] = useState({ wordIndex: 0, letterIndex: 0 });
