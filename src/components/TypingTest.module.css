@@ -1,0 +1,171 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    width: 100%;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+    color: var(--sub-color);
+}
+
+.modes {
+    display: flex;
+    gap: 0.5rem;
+    background: rgba(0, 0, 0, 0.1);
+    padding: 0.5rem;
+    border-radius: 8px;
+}
+
+.modeBtn {
+    background: none;
+    border: none;
+    color: var(--sub-color);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.9rem;
+    padding: 0.25rem 0.5rem;
+    transition: color 0.2s;
+}
+
+.modeBtn:hover {
+    color: var(--text-color);
+}
+
+.modeBtn.active {
+    color: var(--main-color);
+    font-weight: bold;
+}
+
+.divider {
+    width: 1px;
+    background-color: var(--sub-color);
+    margin: 0 0.5rem;
+    opacity: 0.3;
+}
+
+.stats {
+    font-size: 1.5rem;
+    color: var(--main-color);
+}
+
+.wordsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    /* Space between words */
+    font-size: 1.7rem;
+    /* Large readable text */
+    line-height: 1.5;
+    user-select: none;
+    outline: none;
+    height: 150px;
+    /* Fixed height to prevent layout shift */
+    overflow: hidden;
+    position: relative;
+}
+
+.wordsContainer.hidden {
+    opacity: 0.1;
+    pointer-events: none;
+}
+
+.word {
+    display: flex;
+    margin-right: 0.5rem;
+}
+
+.letter {
+    position: relative;
+    color: var(--sub-color);
+    transition: color 0.1s;
+}
+
+.letter.correct {
+    color: var(--text-color);
+}
+
+.letter.incorrect {
+    color: var(--error-color);
+}
+
+/* Cursor Animation */
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}
+
+.letter.cursor::before {
+    content: "";
+    position: absolute;
+    left: -2px;
+    top: 5%;
+    height: 90%;
+    width: 2px;
+    background-color: var(--caret-color);
+    animation: blink 1s infinite;
+}
+
+.results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.finalWpm {
+    font-size: 4rem;
+    color: var(--main-color);
+    font-weight: bold;
+}
+
+.label {
+    font-size: 1rem;
+    color: var(--sub-color);
+    margin-bottom: 2rem;
+}
+
+.restartBtn {
+    background-color: var(--sub-color);
+    color: var(--bg-color);
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.restartBtn:hover {
+    background-color: var(--text-color);
+}
+
+.instruction {
+    text-align: center;
+    color: var(--sub-color);
+    opacity: 0.7;
+    margin-top: 2rem;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
