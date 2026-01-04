@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { getRandomWords, Language } from "@/lib/dictionaries";
+import { getRandomWords, Language, Difficulty } from "@/lib/dictionaries";
 import styles from "./MonsterGame.module.css";
 
 interface Enemy {
@@ -24,7 +24,7 @@ interface Particle {
     text: string;
 }
 
-export default function MonsterGame({ onExit, language }: { onExit: () => void, language: Language }) {
+export default function MonsterGame({ onExit, language, difficulty }: { onExit: () => void, language: Language, difficulty: Difficulty }) {
     const [enemies, setEnemies] = useState<Enemy[]>([]);
     const [score, setScore] = useState(0);
     const [lives, setLives] = useState(3);
@@ -43,22 +43,35 @@ export default function MonsterGame({ onExit, language }: { onExit: () => void, 
 
     // --- Game Logic Helpers ---
 
+    const getDifficultyStats = () => {
+        switch (difficulty) {
+            case 'starter': return { speed: 0.3, spawn: 2500, scoreMult: 0.5 };
+            case 'elementary': return { speed: 0.5, spawn: 2000, scoreMult: 0.8 };
+            case 'intermediate': return { speed: 0.8, spawn: 1800, scoreMult: 1 };
+            case 'advanced': return { speed: 1.2, spawn: 1500, scoreMult: 1.5 };
+            case 'master': return { speed: 2.0, spawn: 1000, scoreMult: 2.5 };
+            default: return { speed: 0.5, spawn: 2000, scoreMult: 1 };
+        }
+    };
+
     const spawnEnemy = useCallback((time: number) => {
-        const word = getRandomWords(language, 'elementary', 1)[0];
+        const word = getRandomWords(language, difficulty, 1)[0];
         const types: Enemy['type'][] = ['slime', 'bat', 'ghost'];
         const type = types[Math.floor(Math.random() * types.length)];
 
-        // Speed var based on type
-        let baseSpeed = 0.5;
-        if (type === 'bat') baseSpeed = 0.8;
-        if (type === 'ghost') baseSpeed = 0.3;
+        // Speed var based on type + difficulty
+        const { speed: diffSpeed, spawn: diffSpawn } = getDifficultyStats();
+
+        let baseSpeed = diffSpeed;
+        if (type === 'bat') baseSpeed *= 1.2;
+        if (type === 'ghost') baseSpeed *= 0.8;
 
         const newEnemy: Enemy = {
             id: nextEnemyId.current++,
             word: word,
             x: Math.random() * 80 + 10,
             y: -50,
-            speed: baseSpeed + (Math.random() * 0.3) + (score * 0.005),
+            speed: baseSpeed + (Math.random() * 0.2) + (score * 0.002),
             matchedIndex: 0,
             type,
             shake: false,
@@ -67,9 +80,9 @@ export default function MonsterGame({ onExit, language }: { onExit: () => void, 
         };
         setEnemies(prev => [...prev, newEnemy]);
         lastSpawnTime.current = time;
-        // Cap spawn rate at 600ms
-        spawnRate.current = Math.max(600, 2000 - (score * 15));
-    }, [score]);
+        // Cap spawn rate 
+        spawnRate.current = Math.max(500, diffSpawn - (score * 10));
+    }, [score, difficulty, language]);
 
     const createParticle = (x: number, y: number, text: string) => {
         const id = nextParticleId.current++;

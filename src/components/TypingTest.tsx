@@ -58,7 +58,7 @@ export default function TypingTest() {
     }, [handleInput, resetGame, gameState, isGameMode]);
 
     if (isGameMode) {
-        return <MonsterGame onExit={() => setIsGameMode(false)} language={language} />;
+        return <MonsterGame onExit={() => setIsGameMode(false)} language={language} difficulty={difficulty} />;
     }
 
     return (
@@ -104,16 +104,6 @@ export default function TypingTest() {
                         </button>
                     </div>
 
-                    <div className={styles.divider}>|</div>
-
-                    <button
-                        className={`${styles.modeBtn} ${isGameMode ? styles.active : ''}`}
-                        style={{ color: 'var(--error-color)', fontWeight: 'bold' }}
-                        onClick={() => setIsGameMode(true)}
-                    >
-                        GAME MODE
-                    </button>
-
                     {mode === 'time' && (
                         <>
                             <div className={styles.divider}>|</div>
@@ -152,6 +142,14 @@ export default function TypingTest() {
                         <span>{wpm} <span style={{ fontSize: '0.8em', opacity: 0.7 }}>wpm</span></span>
                     )}
                 </div>
+
+                <button
+                    className={`${styles.modeBtn} ${isGameMode ? styles.active : ''}`}
+                    style={{ color: 'var(--error-color)', fontWeight: 'bold', marginLeft: 'auto' }}
+                    onClick={() => setIsGameMode(true)}
+                >
+                    GAME MODE
+                </button>
             </div>
 
             {/* Typing Area */}
