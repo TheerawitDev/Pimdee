@@ -83,8 +83,18 @@ export const useTypingEngine = () => {
 
             // Auto-generate more words if near end (only if NOT document mode, assuming random words)
             // For Time Mode or Standard (if we want infinite standard)
-            if (mode === 'time' && currentWordIndex > newWords.length - 20) {
-                const moreWordsStrings = getRandomWords(language, difficulty, 20);
+            // Auto-generate more words if near end (only if NOT document mode, assuming random words)
+            // For Time Mode or Standard (if we want infinite standard)
+            // AND NOW for Document mode (infinite loop until stop)
+            if ((mode === 'time' || mode === 'document') && currentWordIndex > newWords.length - 40) {
+                let moreWordsStrings: string[] = [];
+                if (mode === 'document') {
+                    const doc = getRandomDocument(language);
+                    moreWordsStrings = doc.split(' ');
+                } else {
+                    moreWordsStrings = getRandomWords(language, difficulty, 40);
+                }
+
                 const moreWords = moreWordsStrings.map(str => ({
                     letters: str.split('').map(char => ({ char, status: 'pending' } as Letter))
                 }));
@@ -112,6 +122,7 @@ export const useTypingEngine = () => {
                 } else if (mode === 'standard') {
                     setGameState('finish');
                 }
+                // For document mode, we don't finish automatically on space, just keep going (infinite) until user stops
                 return newWords;
             }
 
@@ -128,8 +139,7 @@ export const useTypingEngine = () => {
 
                     if (currentLetterIndex === currentWord.letters.length - 1 && currentWordIndex === newWords.length - 1) {
                         if (mode === 'standard') setGameState('finish');
-                        // For time mode, we just wait for more words to generate or if logic failed, we stop.
-                        // But the generation logic at top should prevent this.
+                        // For time/document mode, we wait for more words or manual stop.
                     } else {
                         setCursorIndex({ wordIndex: currentWordIndex, letterIndex: currentLetterIndex + 1 });
                     }
@@ -183,6 +193,7 @@ export const useTypingEngine = () => {
         wpm,
         accuracy,
         handleInput,
-        resetGame
+        resetGame,
+        stopGame: () => setGameState('finish')
     };
 };

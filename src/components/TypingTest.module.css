@@ -9,7 +9,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
     color: var(--sub-color);
 }
 
@@ -69,17 +69,47 @@
 .wordsContainer {
     display: flex;
     flex-wrap: wrap;
-    gap: 1.2rem;
-    /* Space between words */
-    font-size: 2.5rem;
-    /* Large readable text */
-    line-height: 1.5;
+    gap: 0.5em;
+    /* Closer gap for paragraph feel */
+    font-size: 2rem;
+    /* Slightly smaller than 2.5rem */
+    line-height: 1.6;
     user-select: none;
     outline: none;
-    height: 150px;
-    /* Fixed height to prevent layout shift */
+    /* 3 lines * 1.6 line-height = 4.8em */
+    /* Padding approx 0.2em top/bottom */
+    height: 5.2em;
     overflow: hidden;
     position: relative;
+    align-content: flex-start;
+    padding: 0.2em 5px;
+}
+
+.wordsContainer.timeMode {
+    /* Extra padding for timer: 2em top */
+    /* Total height: 4.8em text + 2em top padding + 0.2em bottom = 7em */
+    padding-top: 2.2em;
+    height: 7em;
+}
+
+.floatingTimer {
+    position: absolute;
+    top: 0.5em;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--main-color);
+    font-weight: bold;
+    font-size: 1.5rem;
+    z-index: 10;
+}
+
+.wordsContainer.documentMode {
+    column-gap: 0.35em;
+    row-gap: 0.1em;
+}
+
+.wordsContainer.documentMode .word {
+    margin-bottom: 0;
 }
 
 .wordsContainer.hidden {
@@ -88,12 +118,20 @@
 }
 
 .word {
-    display: flex;
-    margin-right: 0.5rem;
+    /* Removed display: flex to allow proper text shaping (especially for Thai) */
+    white-space: nowrap;
+    position: relative;
+    border-bottom: 2px solid transparent;
+    /* Prepare for error underline */
+    margin-bottom: 0.2em;
+    /* Line spacing adjustment */
+}
+
+.wordError {
+    border-bottom-color: var(--error-color);
 }
 
 .letter {
-    position: relative;
     color: var(--sub-color);
     transition: color 0.1s;
 }
@@ -119,12 +157,16 @@
     }
 }
 
+.letter.cursor {
+    position: relative;
+}
+
 .letter.cursor::before {
     content: "";
     position: absolute;
     left: -2px;
-    top: 5%;
-    height: 90%;
+    top: 10%;
+    height: 80%;
     width: 2px;
     background-color: var(--caret-color);
     animation: blink 1s infinite;

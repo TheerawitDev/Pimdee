@@ -23,7 +23,8 @@ export default function TypingTest() {
         setMode,
         timeLimit,
         setTimeLimit,
-        timeLeft
+        timeLeft,
+        stopGame
     } = useTypingEngine();
 
     const [isGameMode, setIsGameMode] = useState(false);
@@ -57,6 +58,28 @@ export default function TypingTest() {
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, [handleInput, resetGame, gameState, isGameMode]);
 
+    // Auto-scroll to active word
+    useEffect(() => {
+        if (!containerRef.current) return;
+        const activeWord = document.getElementById(`word-${cursorIndex.wordIndex}`);
+        if (activeWord) {
+            const container = containerRef.current;
+            const wordTop = activeWord.offsetTop;
+            const containerHeight = container.clientHeight;
+            const wordHeight = activeWord.clientHeight;
+
+            // Calculate target scroll position to center the word
+            // We want wordTop - scrollTop = (containerHeight / 2) - (wordHeight / 2)
+            // So scrollTop = wordTop - (containerHeight / 2) + (wordHeight / 2)
+            const targetScroll = wordTop - (containerHeight / 2) + (wordHeight / 2);
+
+            container.scrollTo({
+                top: targetScroll,
+                behavior: 'smooth'
+            });
+        }
+    }, [cursorIndex.wordIndex, words]);
+
     if (isGameMode) {
         return <MonsterGame onExit={() => setIsGameMode(false)} language={language} difficulty={difficulty} />;
     }
@@ -77,7 +100,7 @@ export default function TypingTest() {
                             className={`${styles.modeBtn} ${language === 'thai' ? styles.active : ''}`}
                             onClick={() => setLanguage('thai')}
                         >
-                            TH
+                            ไทย
                         </button>
                     </div>
 
@@ -137,9 +160,18 @@ export default function TypingTest() {
                 </div>
 
                 <div className={styles.stats}>
-                    {mode === 'time' && gameState !== 'finish' && <span className={styles.timer}>{timeLeft}s</span>}
+
                     {gameState !== 'idle' && (
                         <span>{wpm} <span style={{ fontSize: '0.8em', opacity: 0.7 }}>wpm</span></span>
+                    )}
+                    {(mode === 'document' || mode === 'time') && gameState === 'start' && (
+                        <button
+                            className={styles.modeBtn}
+                            style={{ color: 'var(--error-color)', marginLeft: '1rem', border: '1px solid var(--error-color)', borderRadius: '4px' }}
+                            onClick={stopGame}
+                        >
+                            STOP
+                        </button>
                     )}
                 </div>
 
@@ -152,29 +184,36 @@ export default function TypingTest() {
                 </button>
             </div>
 
-            {/* Typing Area */}
             <div
                 ref={containerRef}
-                className={`${styles.wordsContainer} ${gameState === 'finish' ? styles.hidden : ''}`}
+                className={`${styles.wordsContainer} ${gameState === 'finish' ? styles.hidden : ''} ${mode === 'document' ? styles.documentMode : ''} ${mode === 'time' ? styles.timeMode : ''}`}
             >
-                {words.map((word, wIdx) => (
-                    <div key={wIdx} className={styles.word}>
-                        {word.letters.map((letter, lIdx) => {
-                            const isCursor = cursorIndex.wordIndex === wIdx && cursorIndex.letterIndex === lIdx;
+                {mode === 'time' && gameState !== 'finish' && (
+                    <div className={styles.floatingTimer}>{timeLeft}s</div>
+                )}
+                {words.map((word, wIdx) => {
+                    // Check if this word has any incorrect letters typed so far
+                    const hasError = word.letters.some(l => l.status === 'incorrect');
 
-                            let className = styles.letter;
-                            if (letter.status === 'correct') className += ` ${styles.correct}`;
-                            if (letter.status === 'incorrect') className += ` ${styles.incorrect}`;
-                            if (isCursor) className += ` ${styles.cursor}`;
+                    return (
+                        <div key={wIdx} id={`word-${wIdx}`} className={`${styles.word} ${hasError ? styles.wordError : ''}`}>
+                            {word.letters.map((letter, lIdx) => {
+                                const isCursor = cursorIndex.wordIndex === wIdx && cursorIndex.letterIndex === lIdx;
 
-                            return (
-                                <span key={lIdx} className={className}>
-                                    {letter.char}
-                                </span>
-                            );
-                        })}
-                    </div>
-                ))}
+                                let className = styles.letter;
+                                if (letter.status === 'correct') className += ` ${styles.correct}`;
+                                if (letter.status === 'incorrect') className += ` ${styles.incorrect}`;
+                                if (isCursor) className += ` ${styles.cursor}`;
+
+                                return (
+                                    <span key={lIdx} className={className}>
+                                        {letter.char}
+                                    </span>
+                                );
+                            })}
+                        </div>
+                    );
+                })}
             </div>
 
             {/* Results Screen (Overlay) */}
