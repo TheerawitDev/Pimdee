@@ -41,103 +41,158 @@
 .hudGroup {
     display: flex;
     gap: 1.5rem;
-    background: rgba(0, 0, 0, 0.4);
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    backdrop-filter: blur(4px);
+    background: linear-gradient(to bottom, #334155, #1e293b);
+    padding: 0.5rem 1.5rem;
+    border-radius: 12px;
+    border: 2px solid #475569;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    align-items: center;
+    font-family: 'Courier New', monospace;
+    /* Game-y font */
+    letter-spacing: 1px;
 }
 
-/* --- Player: The Sword Man --- */
+/* --- Player: The Sword Man (Enhanced) --- */
 .playerContainer {
     position: absolute;
     bottom: 40px;
-    /* On the ground */
     left: 50%;
     transform: translateX(-50%);
-    width: 80px;
-    height: 100px;
+    width: 60px;
+    height: 90px;
     z-index: 20;
     transition: transform 0.1s;
+}
+
+.playerCape {
+    position: absolute;
+    top: 20px;
+    left: 5px;
+    width: 50px;
+    height: 60px;
+    background: #ef4444;
+    /* Red Hero Cape */
+    border-radius: 5px;
+    transform-origin: top center;
+    animation: capeFlow 2s infinite ease-in-out;
+    z-index: 0;
+}
+
+@keyframes capeFlow {
+
+    0%,
+    100% {
+        transform: rotate(2deg) skewX(0deg);
+    }
+
+    50% {
+        transform: rotate(-2deg) skewX(2deg);
+    }
 }
 
 .playerBody {
     position: absolute;
     bottom: 0;
-    left: 20px;
+    left: 10px;
     width: 40px;
-    height: 60px;
+    height: 50px;
     background: #3b82f6;
-    /* Blue tunic */
-    border-radius: 8px 8px 0 0;
+    /* Blue Armor */
+    border-radius: 8px 8px 4px 4px;
+    border: 2px solid #1e3a8a;
+    z-index: 1;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Belt */
+.playerBody::after {
+    content: '';
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    height: 8px;
+    background: #78350f;
+    border-top: 2px solid #fbbf24;
+    /* Gold buckle area */
 }
 
 .playerHead {
     position: absolute;
-    top: 10px;
-    left: 20px;
+    top: 5px;
+    left: 10px;
     width: 40px;
     height: 40px;
     background: #fca5a5;
-    /* Skin tone */
     border-radius: 50%;
-    z-index: 21;
+    z-index: 2;
+    border: 2px solid #1e3a8a;
 }
 
-/* Headband */
+/* Headband/Scarf tails */
+.playerHead::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    right: -10px;
+    width: 20px;
+    height: 8px;
+    background: #ef4444;
+    transform: rotate(15deg);
+    z-index: -1;
+}
+
+/* Headband Band */
 .playerHead::after {
     content: '';
     position: absolute;
-    top: 5px;
+    top: 8px;
     left: 0;
     width: 100%;
-    height: 10px;
+    height: 8px;
     background: #ef4444;
-    /* Red headband */
 }
 
-/* Sword */
+/* Sword (Enhanced) */
 .swordWrapper {
     position: absolute;
-    top: 40px;
-    right: -10px;
-    width: 100px;
-    height: 100px;
-    transform-origin: 20px 50px;
-    /* Pivot around hand */
-    transition: transform 0.1s;
+    top: 35px;
+    right: -25px;
+    width: 90px;
+    height: 90px;
+    transform-origin: 10px 50px;
     pointer-events: none;
+    z-index: 5;
 }
 
 .sword {
     position: absolute;
-    top: 40px;
-    left: 0px;
+    top: 42px;
+    left: 0;
     width: 80px;
-    height: 12px;
-    background: #cbd5e1;
-    /* Silver blade */
-    border-radius: 2px 10px 10px 2px;
-    border: 1px solid #64748b;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    height: 14px;
+    background: linear-gradient(to bottom, #f8fafc, #cbd5e1);
+    border-radius: 2px 20px 20px 2px;
+    border: 1px solid #475569;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
     transform-origin: 0% 50%;
     transform: rotate(-45deg);
-    /* Resting position */
 }
 
 .swordHandle {
     position: absolute;
-    top: 36px;
-    left: -10px;
-    width: 20px;
-    height: 20px;
-    background: #78350f;
-    /* Brown handle */
-    border-radius: 50%;
+    top: 38px;
+    left: -12px;
+    width: 24px;
+    height: 24px;
+    background: #b45309;
+    border-radius: 4px;
+    border: 2px solid #78350f;
 }
 
-/* Attack Animation Class */
+/* Attack Animation */
 .attacking .swordWrapper {
-    animation: swing 0.15s ease-out;
+    animation: swing 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes swing {
@@ -146,7 +201,7 @@
     }
 
     50% {
-        transform: rotate(100deg);
+        transform: rotate(110deg);
     }
 
     100% {
@@ -154,74 +209,156 @@
     }
 }
 
-/* --- Enemies --- */
+/* --- Enemies (Enhanced) --- */
 .enemy {
     position: absolute;
     transform: translateX(-50%);
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* transition: top 0.1s linear;  <-- REMOVED to fix jerky animation during JS updates */
     transition: transform 0.1s;
-    /* Only animate transform (shake/scale) */
     z-index: 10;
     will-change: top, left;
 }
 
-/* Enemy Sprites (CSS shapes) */
 .enemySprite {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
+    width: 60px;
+    height: 60px;
     margin-bottom: 5px;
     position: relative;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    border: 2px solid rgba(0, 0, 0, 0.2);
+    /* Common centering for internal parts */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-/* Slime Type */
+/* 1. Slime */
 .enemy[data-type="slime"] .enemySprite {
     background: #84cc16;
-    /* Green */
     border-radius: 50% 50% 10% 10%;
-    height: 40px;
-    width: 45px;
+    height: 45px;
+    width: 50px;
+    border: 2px solid #365314;
+    box-shadow: inset 5px 5px 10px rgba(255, 255, 255, 0.3);
 }
 
-/* Bat Type */
+/* 2. Ghost */
+.enemy[data-type="ghost"] .enemySprite {
+    background: rgba(226, 232, 240, 0.9);
+    border-radius: 50% 50% 0 0;
+    height: 55px;
+    width: 50px;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+    animation: float 2s infinite ease-in-out;
+}
+
+.enemy[data-type="ghost"] .enemySprite::before {
+    content: '';
+    /* Tail */
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    height: 15px;
+    background: inherit;
+    clip-path: polygon(0 0, 20% 100%, 40% 0, 60% 100%, 80% 0, 100% 100%, 100% 0);
+}
+
+/* 3. Bat */
 .enemy[data-type="bat"] .enemySprite {
-    background: #a855f7;
-    /* Purple */
-    border-radius: 50%;
-    width: 40px;
+    width: 60px;
     height: 40px;
+    background: #581c87;
+    border-radius: 50%;
+    position: relative;
 }
 
 .enemy[data-type="bat"] .enemySprite::before,
 .enemy[data-type="bat"] .enemySprite::after {
     content: '';
     position: absolute;
-    top: 0;
-    width: 20px;
-    height: 20px;
-    background: #a855f7;
-    border-radius: 50%;
+    top: -10px;
+    width: 30px;
+    height: 50px;
+    background: #581c87;
+    border-radius: 50% 50% 0 50%;
+    z-index: -1;
 }
 
 .enemy[data-type="bat"] .enemySprite::before {
-    left: -10px;
+    left: -15px;
+    transform: rotate(20deg);
 }
 
 .enemy[data-type="bat"] .enemySprite::after {
-    right: -10px;
+    right: -15px;
+    transform: rotate(-20deg) scaleX(-1);
 }
 
-/* Ghost Type */
-.enemy[data-type="ghost"] .enemySprite {
-    background: #e2e8f0;
-    /* White/Gray */
-    border-radius: 50% 50% 0 0;
-    opacity: 0.9;
+/* 4. Spider */
+.enemy[data-type="spider"] .enemySprite {
+    width: 40px;
+    height: 40px;
+    background: #1e293b;
+    border-radius: 50%;
+    border: 1px solid #94a3b8;
+}
+
+.enemy[data-type="spider"] .enemySprite::before {
+    content: '/ \\ / \\';
+    font-family: monospace;
+    font-weight: bold;
+    color: #1e293b;
+    position: absolute;
+    font-size: 30px;
+    width: 80px;
+    text-align: center;
+    top: -10px;
+    z-index: -1;
+    letter-spacing: -2px;
+}
+
+/* 5. Skeleton */
+.enemy[data-type="skeleton"] .enemySprite {
+    width: 40px;
+    height: 50px;
+    background: #f1f5f9;
+    border-radius: 10px 10px 4px 4px;
+    border: 2px solid #94a3b8;
+}
+
+.enemy[data-type="skeleton"] .enemySprite::before {
+    content: '';
+    /* Ribs */
+    position: absolute;
+    top: 25px;
+    left: 5px;
+    right: 5px;
+    height: 2px;
+    background: #94a3b8;
+    box-shadow: 0 5px 0 #94a3b8, 0 10px 0 #94a3b8;
+}
+
+/* 6. Wolf */
+.enemy[data-type="wolf"] .enemySprite {
+    width: 50px;
+    height: 50px;
+    background: #57534e;
+    border-radius: 50% 0 50% 50%;
+    transform: rotate(-45deg);
+    border: 2px solid #292524;
+}
+
+.enemy[data-type="wolf"] .enemySprite::before {
+    content: '';
+    /* Ears */
+    position: absolute;
+    top: -5px;
+    left: 20px;
+    width: 15px;
+    height: 15px;
+    background: #57534e;
+    transform: rotate(45deg);
 }
 
 /* Dying Animation */

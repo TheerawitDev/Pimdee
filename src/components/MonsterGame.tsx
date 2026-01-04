@@ -11,7 +11,7 @@ interface Enemy {
     y: number; // Pixels
     speed: number;
     matchedIndex: number; // How many letters matched
-    type: 'slime' | 'bat' | 'ghost' | 'spider' | 'skeleton' | 'wolf';
+    type: 'slime' | 'bat' | 'ghost' | 'spider' | 'skeleton' | 'wolf' | 'eye';
     shake: boolean;
     maxHealth: number;
     currentHealth: number;
@@ -49,25 +49,29 @@ export default function MonsterGame({ onExit, language, difficulty }: { onExit: 
     const getDifficultyStats = () => {
         switch (difficulty) {
             case 'starter': return { speed: 0.1, spawn: 3000, scoreMult: 0.5 };
-            case 'elementary': return { speed: 0.25, spawn: 2500, scoreMult: 0.8 };
-            case 'intermediate': return { speed: 0.5, spawn: 2200, scoreMult: 1 };
-            case 'advanced': return { speed: 0.9, spawn: 1800, scoreMult: 1.5 };
-            case 'master': return { speed: 1.5, spawn: 1400, scoreMult: 2.5 };
-            default: return { speed: 0.3, spawn: 2500, scoreMult: 1 };
+            case 'elementary': return { speed: 0.12, spawn: 2800, scoreMult: 0.6 };
+            case 'intermediate': return { speed: 0.15, spawn: 2600, scoreMult: 0.7 };
+            case 'advanced': return { speed: 0.18, spawn: 2400, scoreMult: 0.8 };
+            case 'master': return { speed: 0.2, spawn: 2200, scoreMult: 0.9 };
+            default: return { speed: 0.15, spawn: 2500, scoreMult: 0.7 };
         }
     };
 
     const spawnEnemy = useCallback((time: number) => {
         const word = getRandomWords(language, difficulty, 1)[0];
-        const types: Enemy['type'][] = ['slime', 'bat', 'ghost'];
+        const types: Enemy['type'][] = ['slime', 'bat', 'ghost', 'spider', 'skeleton', 'wolf', 'eye'];
         const type = types[Math.floor(Math.random() * types.length)];
 
         // Speed var based on type + difficulty
         const { speed: diffSpeed, spawn: diffSpawn } = getDifficultyStats();
 
         let baseSpeed = diffSpeed;
-        if (type === 'bat') baseSpeed *= 1.2; // Reduced bat multiplier
+        if (type === 'bat') baseSpeed *= 1.2;
         if (type === 'ghost') baseSpeed *= 0.8;
+        if (type === 'wolf') baseSpeed *= 1.4;
+        if (type === 'spider') baseSpeed *= 1.1;
+        if (type === 'skeleton') baseSpeed *= 0.9;
+        if (type === 'eye') baseSpeed *= 1.0;
 
         const newEnemy: Enemy = {
             id: nextEnemyId.current++,
@@ -319,6 +323,7 @@ export default function MonsterGame({ onExit, language, difficulty }: { onExit: 
 
             {/* Player Character */}
             <div className={`${styles.playerContainer} ${isAttacking ? styles.attacking : ''}`}>
+                <div className={styles.playerCape}></div>
                 <div className={styles.playerBody}></div>
                 <div className={styles.playerHead}></div>
                 <div className={styles.swordWrapper}>
