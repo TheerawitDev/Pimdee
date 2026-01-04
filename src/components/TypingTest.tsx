@@ -30,6 +30,7 @@ export default function TypingTest() {
 
     const [isGameMode, setIsGameMode] = useState(false);
     const [showKeyboard, setShowKeyboard] = useState(false);
+    const [showHints, setShowHints] = useState(true);
     const [theme, setTheme] = useState<'light' | 'dark'>('light');
     const containerRef = useRef<HTMLDivElement>(null);
     const caretRef = useRef<HTMLDivElement>(null);
@@ -249,6 +250,22 @@ export default function TypingTest() {
                         </svg>
                     </button>
 
+                    {/* Hint Toggle (Lightbulb) - Only visible when keyboard is active */}
+                    {showKeyboard && (
+                        <button
+                            className={`${styles.themeToggle} ${showHints ? styles.active : ''}`}
+                            onClick={() => setShowHints(!showHints)}
+                            title="Toggle Key Hints"
+                            style={{ marginRight: '0.5rem' }}
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M9 18h6"></path>
+                                <path d="M10 22h4"></path>
+                                <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"></path>
+                            </svg>
+                        </button>
+                    )}
+
                     {/* Theme Toggle */}
                     <button className={styles.themeToggle} onClick={toggleTheme} title="Toggle Theme">
                         {theme === 'light' ? (
@@ -350,6 +367,7 @@ export default function TypingTest() {
                     activeChar={
                         words[cursorIndex.wordIndex]?.letters[cursorIndex.letterIndex]?.char || ' '
                     }
+                    showHints={showHints}
                 />
             )}
         </div>

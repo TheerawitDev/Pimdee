@@ -81,7 +81,13 @@
     align-items: center;
     font-size: 1.5rem;
     color: var(--main-color);
-    gap: 1.5rem;
+    gap: 3rem;
+    /* Increased from 1.5rem */
+}
+
+.timer {
+    margin: 0 1rem;
+    font-variant-numeric: tabular-nums;
 }
 
 .wordsContainer {

@@ -8,9 +8,10 @@ interface VirtualKeyboardProps {
     language: 'english' | 'thai';
     activeChar: string;
     showHands?: boolean;
+    showHints?: boolean;
 }
 
-export default function VirtualKeyboard({ language, activeChar, showHands = true }: VirtualKeyboardProps) {
+export default function VirtualKeyboard({ language, activeChar, showHands = true, showHints = true }: VirtualKeyboardProps) {
 
     // Determine which key(s) to highlight
     const targetKeyInfo = useMemo(() => {
@@ -53,7 +54,7 @@ export default function VirtualKeyboard({ language, activeChar, showHands = true
     }, [activeChar, language]);
 
     const isKeyActive = (key: KeyData) => {
-        if (!targetKeyInfo) return false;
+        if (!showHints || !targetKeyInfo) return false;
 
         // Direct match
         if (targetKeyInfo.key.code === key.code) return true;
