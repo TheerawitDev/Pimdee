@@ -13,6 +13,7 @@
     align-items: center;
     margin-bottom: 2rem;
     color: var(--sub-color);
+    font-family: var(--font-mono);
 }
 
 .configBar {
@@ -121,6 +122,7 @@
 .wordsContainer.documentMode {
     column-gap: 0.3em;
     row-gap: 0.2em;
+    height: 5.2em;
 }
 
 .wordsContainer.hidden {
