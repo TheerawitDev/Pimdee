@@ -16,6 +16,7 @@ interface ConfigBarProps {
     setShowHints: (show: boolean) => void;
     theme: 'light' | 'dark';
     toggleTheme: () => void;
+    isHidden?: boolean;
 }
 
 export default function ConfigBar({
@@ -32,10 +33,11 @@ export default function ConfigBar({
     showHints,
     setShowHints,
     theme,
-    toggleTheme
+    toggleTheme,
+    isHidden = false
 }: ConfigBarProps) {
     return (
-        <div className={styles.configBar}>
+        <div className={`${styles.configBar} ${isHidden ? styles.hidden : ''}`}>
             <div className={styles.group}>
                 <button
                     className={`${styles.modeBtn} ${language === 'english' ? styles.active : ''}`}

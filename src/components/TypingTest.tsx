@@ -161,6 +161,7 @@ export default function TypingTest() {
                     setShowHints={setShowHints}
                     theme={theme}
                     toggleTheme={toggleTheme}
+                    isHidden={gameState === 'start'}
                 />
 
                 <StatsDisplay
