@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
-import { Noto_Sans_Thai, Roboto_Mono } from "next/font/google";
+import { Noto_Sans, Noto_Sans_Thai, Roboto_Mono } from "next/font/google";
 import "./globals.css";
+
+const notoSans = Noto_Sans({
+  variable: "--font-noto-sans",
+  subsets: ["latin"],
+  weight: ["400"],
+});
 
 const notoSansThai = Noto_Sans_Thai({
   variable: "--font-thai",
@@ -25,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${notoSansThai.variable} ${robotoMono.variable}`}>
+      <body className={`${notoSans.variable} ${notoSansThai.variable} ${robotoMono.variable}`}>
         {children}
       </body>
     </html>

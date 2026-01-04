@@ -1,21 +1,25 @@
 :root {
-  /* Main Theme Colors (Default: Dark/Serika style) */
-  --bg-color: #323437;
-  --main-color: #e2b714;
-  --caret-color: #e2b714;
-  --sub-color: #646669;
-  --text-color: #d1d0c5;
-  --error-color: #ca4754;
-  --error-extra-color: #7e2a33;
-  --colorful-error-color: #ca4754;
-  --colorful-error-extra-color: #7e2a33;
+  /* Main Theme Colors (Clean Blue/White) */
+  --bg-color: #f0f4f8;
+  /* Light blue-ish gray background */
+  --main-color: #2563eb;
+  /* Primary Blue */
+  --caret-color: #2563eb;
+  /* Blue caret */
+  --sub-color: #94a3b8;
+  /* Slate gray for inactive text */
+  --text-color: #334155;
+  /* Dark slate for active/correct text */
+  --error-color: #ef4444;
+  /* Red for errors */
+  --error-extra-color: #b91c1c;
 
   /* Font Families */
-  --font-primary: var(--font-thai), sans-serif;
+  --font-primary: var(--font-noto-sans), var(--font-thai), sans-serif;
   --font-mono: var(--font-mono), monospace;
 
   /* Spacing & Layout */
-  --content-width: 1000px;
+  --content-width: 1400px;
   --header-height: 80px;
   --footer-height: 40px;
 }
@@ -34,7 +38,8 @@ body {
   display: flex;
   flex-direction: column;
   transition: background-color 0.25s, color 0.25s;
-  overflow-y: scroll; /* As per Monkeytype, always show scrollbar to prevent layout shift */
+  overflow-y: scroll;
+  /* As per Monkeytype, always show scrollbar to prevent layout shift */
 }
 
 a {
