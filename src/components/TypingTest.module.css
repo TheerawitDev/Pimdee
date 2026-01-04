@@ -32,6 +32,7 @@
     color: var(--main-color);
     font-weight: bold;
     margin-right: 1.5rem;
+    margin-left: 2rem;
 }
 
 .modeBtn {
@@ -77,34 +78,16 @@
     user-select: none;
     outline: none;
     /* 3 lines * 1.6 line-height = 4.8em */
-    /* Padding approx 0.2em top/bottom */
-    height: 5.2em;
+    /* Padding approx 0.1em top/bottom to be tight */
+    height: 5em;
     overflow: hidden;
     position: relative;
     align-content: flex-start;
-    padding: 0.2em 5px;
-}
-
-.wordsContainer.timeMode {
-    /* Extra padding for timer: 2em top */
-    /* Total height: 4.8em text + 2em top padding + 0.2em bottom = 7em */
-    padding-top: 2.2em;
-    height: 7em;
-}
-
-.floatingTimer {
-    position: absolute;
-    top: 0.5em;
-    left: 50%;
-    transform: translateX(-50%);
-    color: var(--main-color);
-    font-weight: bold;
-    font-size: 1.5rem;
-    z-index: 10;
+    padding: 0.1em 5px;
 }
 
 .wordsContainer.documentMode {
-    column-gap: 0.35em;
+    column-gap: 0.25em;
     row-gap: 0.1em;
 }
 
@@ -178,18 +161,27 @@
     align-items: center;
     justify-content: center;
     animation: fadeIn 0.3s ease;
+    margin-top: 2rem;
 }
 
-.finalWpm {
-    font-size: 6rem;
+.resultGroup {
+    display: flex;
+    gap: 4rem;
+    margin-bottom: 2rem;
+}
+
+.resultValue {
+    font-size: 4rem;
     color: var(--main-color);
     font-weight: bold;
+    line-height: 1;
 }
 
-.label {
+.resultLabel {
     font-size: 1rem;
     color: var(--sub-color);
-    margin-bottom: 2rem;
+    text-align: center;
+    margin-top: 0.5rem;
 }
 
 .restartBtn {

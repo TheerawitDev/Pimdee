@@ -111,19 +111,19 @@ export default function TypingTest() {
                             className={`${styles.modeBtn} ${mode === 'standard' ? styles.active : ''}`}
                             onClick={() => setMode('standard')}
                         >
-                            Words
+                            {language === 'thai' ? 'คำ' : 'Words'}
                         </button>
                         <button
                             className={`${styles.modeBtn} ${mode === 'time' ? styles.active : ''}`}
                             onClick={() => setMode('time')}
                         >
-                            Time
+                            {language === 'thai' ? 'จำกัดเวลา' : 'Time'}
                         </button>
                         <button
                             className={`${styles.modeBtn} ${mode === 'document' ? styles.active : ''}`}
                             onClick={() => setMode('document')}
                         >
-                            Document
+                            {language === 'thai' ? 'บทความ' : 'Document'}
                         </button>
                     </div>
 
@@ -160,11 +160,11 @@ export default function TypingTest() {
                 </div>
 
                 <div className={styles.stats}>
-
-                    {gameState !== 'idle' && (
+                    {mode === 'time' && gameState !== 'finish' && <span className={styles.timer}>{timeLeft}s</span>}
+                    {mode === 'time' && gameState !== 'idle' && (
                         <span>{wpm} <span style={{ fontSize: '0.8em', opacity: 0.7 }}>wpm</span></span>
                     )}
-                    {(mode === 'document' || mode === 'time') && gameState === 'start' && (
+                    {gameState === 'start' && (
                         <button
                             className={styles.modeBtn}
                             style={{ color: 'var(--error-color)', marginLeft: '1rem', border: '1px solid var(--error-color)', borderRadius: '4px' }}
@@ -186,11 +186,8 @@ export default function TypingTest() {
 
             <div
                 ref={containerRef}
-                className={`${styles.wordsContainer} ${gameState === 'finish' ? styles.hidden : ''} ${mode === 'document' ? styles.documentMode : ''} ${mode === 'time' ? styles.timeMode : ''}`}
+                className={`${styles.wordsContainer} ${gameState === 'finish' ? styles.hidden : ''} ${mode === 'document' ? styles.documentMode : ''}`}
             >
-                {mode === 'time' && gameState !== 'finish' && (
-                    <div className={styles.floatingTimer}>{timeLeft}s</div>
-                )}
                 {words.map((word, wIdx) => {
                     // Check if this word has any incorrect letters typed so far
                     const hasError = word.letters.some(l => l.status === 'incorrect');

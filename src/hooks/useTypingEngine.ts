@@ -15,7 +15,7 @@ export interface Word {
 }
 
 export const useTypingEngine = () => {
-    const [language, setLanguage] = useState<Language>('english');
+    const [language, setLanguage] = useState<Language>('thai');
     const [difficulty, setDifficulty] = useState<Difficulty>('elementary');
     const [words, setWords] = useState<Word[]>([]);
     const [gameState, setGameState] = useState<TypingState>('idle');
@@ -31,6 +31,7 @@ export const useTypingEngine = () => {
     const [wpm, setWpm] = useState(0);
     const [accuracy, setAccuracy] = useState(100);
     const [correctKeyStrokes, setCorrectKeyStrokes] = useState(0);
+    const [totalKeyStrokes, setTotalKeyStrokes] = useState(0);
 
 
     const resetGame = useCallback(() => {
@@ -55,6 +56,7 @@ export const useTypingEngine = () => {
         setWpm(0);
         setAccuracy(100);
         setCorrectKeyStrokes(0);
+        setTotalKeyStrokes(0);
 
 
         // Reset Timer
@@ -130,6 +132,16 @@ export const useTypingEngine = () => {
             if (key.length === 1) {
                 if (currentLetterIndex < currentWord.letters.length) {
                     const expectedChar = currentWord.letters[currentLetterIndex].char;
+
+                    setTotalKeyStrokes(prev => {
+                        const newTotal = prev + 1;
+                        // Calculate accuracy immediately or in effect? In effect is cleaner but here is instant.
+                        // We'll trust the effect or calc it here. Let's do it in effect for consistency or just render it?
+                        // Actually, calculating in render is safer if we trust the states.
+                        // But let's verify update:
+                        return newTotal;
+                    });
+
                     if (key === expectedChar) {
                         currentWord.letters[currentLetterIndex].status = 'correct';
                         setCorrectKeyStrokes(prev => prev + 1);
@@ -151,6 +163,15 @@ export const useTypingEngine = () => {
 
     }, [gameState, cursorIndex, mode, language, difficulty]);
 
+    useEffect(() => {
+        if (totalKeyStrokes > 0) {
+            const acc = Math.round((correctKeyStrokes / totalKeyStrokes) * 100);
+            setAccuracy(acc);
+        } else {
+            setAccuracy(100);
+        }
+    }, [correctKeyStrokes, totalKeyStrokes]);
+
     // Timer & WPM
     useEffect(() => {
         let interval: NodeJS.Timeout;
@@ -167,6 +188,7 @@ export const useTypingEngine = () => {
                     if (mode === 'time') {
                         const remaining = Math.max(0, timeLimit - Math.floor(timeElapsedSec));
                         setTimeLeft(remaining);
+                        // Ensure we hit exactly 0 and finish
                         if (remaining === 0) {
                             setGameState('finish');
                         }

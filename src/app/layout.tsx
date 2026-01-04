@@ -30,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="th">
       <body className={`${notoSans.variable} ${notoSansThai.variable} ${robotoMono.variable}`}>
         {children}
       </body>
