@@ -22,7 +22,7 @@ export const useTypingEngine = () => {
     const [cursorIndex, setCursorIndex] = useState({ wordIndex: 0, letterIndex: 0 });
 
     // Modes
-    const [mode, setMode] = useState<'standard' | 'time' | 'document'>('standard');
+    const [mode, setMode] = useState<'standard' | 'time' | 'document'>('time');
     const [timeLimit, setTimeLimit] = useState<30 | 60 | 120>(60);
     const [timeLeft, setTimeLeft] = useState(60);
 

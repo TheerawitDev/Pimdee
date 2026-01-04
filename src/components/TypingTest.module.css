@@ -8,31 +8,29 @@
 .header {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
+    /* changed from center to allow multiline if needed, or stick to center */
     align-items: center;
     margin-bottom: 2rem;
     color: var(--sub-color);
 }
 
-.modes {
+.configBar {
     display: flex;
-    gap: 1rem;
+    gap: 1.5rem;
     align-items: center;
-    background: rgba(0, 0, 0, 0.05);
-    /* Lighter bg */
-    padding: 0.5rem 1rem;
-    border-radius: 12px;
+    background: var(--bg-color);
+    /* Match bg, or slightly offset */
+    font-size: 0.9rem;
 }
 
 .group {
     display: flex;
     gap: 0.25rem;
-}
-
-.timer {
-    color: var(--main-color);
-    font-weight: bold;
-    margin-right: 1.5rem;
-    margin-left: 2rem;
+    background: rgba(127, 127, 127, 0.1);
+    /* Subtle container bg */
+    padding: 0.25rem;
+    border-radius: 8px;
 }
 
 .modeBtn {
@@ -41,9 +39,10 @@
     color: var(--sub-color);
     cursor: pointer;
     font-family: inherit;
-    font-size: 0.9rem;
-    padding: 0.25rem 0.5rem;
-    transition: color 0.2s;
+    font-size: 0.85rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
 }
 
 .modeBtn:hover {
@@ -51,48 +50,62 @@
 }
 
 .modeBtn.active {
-    color: var(--main-color);
-    font-weight: bold;
+    color: var(--bg-color);
+    /* Contrast text */
+    background-color: var(--text-color);
+    /* Dark/Light active bg */
+    font-weight: 500;
 }
 
-.divider {
-    width: 1px;
-    background-color: var(--sub-color);
-    margin: 0 0.5rem;
-    opacity: 0.3;
+
+/* Theme Toggle specific */
+.themeToggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--sub-color);
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+    margin-left: 1rem;
+}
+
+.themeToggle:hover {
+    color: var(--text-color);
 }
 
 .stats {
+    display: flex;
+    align-items: center;
     font-size: 1.5rem;
     color: var(--main-color);
+    gap: 1.5rem;
 }
 
 .wordsContainer {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5em;
-    /* Closer gap for paragraph feel */
-    font-size: 2rem;
-    /* Slightly smaller than 2.5rem */
-    line-height: 1.6;
+    gap: 0.6em;
+    font-size: 1.7rem;
+    /* Adjusted size */
+    line-height: 1.5;
     user-select: none;
     outline: none;
-    /* 3 lines * 1.6 line-height = 4.8em */
-    /* Padding approx 0.1em top/bottom to be tight */
-    height: 5em;
+    height: 4.5em;
+    /* 3 lines roughly */
     overflow: hidden;
     position: relative;
     align-content: flex-start;
     padding: 0.1em 5px;
+    font-family: var(--font-mono);
+    /* Ensure mono for alignment if desired, but user likes sans usually. Keeping inherited. */
 }
 
 .wordsContainer.documentMode {
-    column-gap: 0.25em;
-    row-gap: 0.1em;
-}
-
-.wordsContainer.documentMode .word {
-    margin-bottom: 0;
+    column-gap: 0.3em;
+    row-gap: 0.2em;
 }
 
 .wordsContainer.hidden {
@@ -101,13 +114,10 @@
 }
 
 .word {
-    /* Removed display: flex to allow proper text shaping (especially for Thai) */
     white-space: nowrap;
     position: relative;
     border-bottom: 2px solid transparent;
-    /* Prepare for error underline */
     margin-bottom: 0.2em;
-    /* Line spacing adjustment */
 }
 
 .wordError {
@@ -140,19 +150,18 @@
     }
 }
 
-.letter.cursor {
-    position: relative;
-}
-
-.letter.cursor::before {
-    content: "";
+/* Cursor is now handled by a separate element (.caret) */
+.caret {
     position: absolute;
-    left: -2px;
-    top: 10%;
-    height: 80%;
     width: 2px;
+    height: 1.5em;
+    /* approximate line height */
     background-color: var(--caret-color);
+    transition: left 0.1s ease, top 0.1s ease;
     animation: blink 1s infinite;
+    pointer-events: none;
+    z-index: 10;
+    border-radius: 2px;
 }
 
 .results {
@@ -167,7 +176,6 @@
 .resultGroup {
     display: flex;
     gap: 4rem;
-    margin-bottom: 2rem;
 }
 
 .resultValue {
@@ -186,7 +194,7 @@
 
 .restartBtn {
     background-color: var(--main-color);
-    color: white;
+    color: var(--bg-color);
     border: none;
     padding: 0.8rem 2rem;
     font-size: 1.2rem;

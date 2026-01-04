@@ -28,7 +28,31 @@ export default function TypingTest() {
     } = useTypingEngine();
 
     const [isGameMode, setIsGameMode] = useState(false);
+    const [theme, setTheme] = useState<'light' | 'dark'>('light');
     const containerRef = useRef<HTMLDivElement>(null);
+    const caretRef = useRef<HTMLDivElement>(null);
+
+    // Initial Theme Load
+    useEffect(() => {
+        // Check local storage or system preference
+        const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
+        const systemTheme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        const targetTheme = savedTheme || systemTheme;
+
+        if (targetTheme !== theme) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setTheme(targetTheme);
+        }
+        document.documentElement.setAttribute('data-theme', targetTheme);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const toggleTheme = () => {
+        const newTheme = theme === 'light' ? 'dark' : 'light';
+        setTheme(newTheme);
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    };
 
     // Handle Global Keydown (Only if NOT in game mode)
     useEffect(() => {
@@ -69,8 +93,6 @@ export default function TypingTest() {
             const wordHeight = activeWord.clientHeight;
 
             // Calculate target scroll position to center the word
-            // We want wordTop - scrollTop = (containerHeight / 2) - (wordHeight / 2)
-            // So scrollTop = wordTop - (containerHeight / 2) + (wordHeight / 2)
             const targetScroll = wordTop - (containerHeight / 2) + (wordHeight / 2);
 
             container.scrollTo({
@@ -80,6 +102,57 @@ export default function TypingTest() {
         }
     }, [cursorIndex.wordIndex, words]);
 
+    // Update Caret Position
+    useEffect(() => {
+        const updateCaret = () => {
+            if (!containerRef.current || !caretRef.current) return;
+
+            const currentWordEl = document.getElementById(`word-${cursorIndex.wordIndex}`);
+            if (!currentWordEl) return;
+
+            const letterIndex = cursorIndex.letterIndex;
+            const letters = currentWordEl.querySelectorAll(`.${styles.letter}`);
+
+            // Find position
+            let targetLeft = 0;
+            let targetTop = 0;
+            let height = 0;
+
+            if (letters.length > 0 && letterIndex < letters.length) {
+                // Cursor at a specific letter
+                const targetLetter = letters[letterIndex] as HTMLElement;
+                targetLeft = currentWordEl.offsetLeft + targetLetter.offsetLeft;
+                targetTop = currentWordEl.offsetTop + targetLetter.offsetTop;
+                height = targetLetter.offsetHeight;
+            } else if (letters.length > 0) {
+                // Cursor at end of word
+                const lastLetter = letters[letters.length - 1] as HTMLElement;
+                targetLeft = currentWordEl.offsetLeft + lastLetter.offsetLeft + lastLetter.offsetWidth;
+                targetTop = currentWordEl.offsetTop + lastLetter.offsetTop;
+                height = lastLetter.offsetHeight;
+
+            } else {
+                // Empty word or just starting (fallback)
+                targetLeft = currentWordEl.offsetLeft;
+                targetTop = currentWordEl.offsetTop;
+                height = currentWordEl.clientHeight || 24;
+            }
+
+            // Adjust for container scroll if needed? 
+            // offsetTop is relative to the offsetParent, which should be the container if it has position: relative?
+            // Check css: .wordsContainer has position: relative? Yes.
+
+            caretRef.current.style.left = `${targetLeft}px`;
+            caretRef.current.style.top = `${targetTop + (height * 0.1)}px`; // slight offset
+            caretRef.current.style.height = `${height * 0.8}px`;
+        };
+
+        updateCaret();
+        window.addEventListener('resize', updateCaret);
+        return () => window.removeEventListener('resize', updateCaret);
+
+    }, [cursorIndex, words]);
+
     if (isGameMode) {
         return <MonsterGame onExit={() => setIsGameMode(false)} language={language} difficulty={difficulty} />;
     }
@@ -88,7 +161,7 @@ export default function TypingTest() {
         <div className={styles.wrapper}>
             {/* Header / Stats */}
             <div className={styles.header}>
-                <div className={styles.modes}>
+                <div className={styles.configBar}>
                     <div className={styles.group}>
                         <button
                             className={`${styles.modeBtn} ${language === 'english' ? styles.active : ''}`}
@@ -103,8 +176,6 @@ export default function TypingTest() {
                             ไทย
                         </button>
                     </div>
-
-                    <div className={styles.divider}>|</div>
 
                     <div className={styles.group}>
                         <button
@@ -128,17 +199,12 @@ export default function TypingTest() {
                     </div>
 
                     {mode === 'time' && (
-                        <>
-                            <div className={styles.divider}>|</div>
-                            <div className={styles.group}>
-                                <button className={`${styles.modeBtn} ${timeLimit === 30 ? styles.active : ''}`} onClick={() => setTimeLimit(30)}>30s</button>
-                                <button className={`${styles.modeBtn} ${timeLimit === 60 ? styles.active : ''}`} onClick={() => setTimeLimit(60)}>60s</button>
-                                <button className={`${styles.modeBtn} ${timeLimit === 120 ? styles.active : ''}`} onClick={() => setTimeLimit(120)}>120s</button>
-                            </div>
-                        </>
+                        <div className={styles.group}>
+                            <button className={`${styles.modeBtn} ${timeLimit === 30 ? styles.active : ''}`} onClick={() => setTimeLimit(30)}>30s</button>
+                            <button className={`${styles.modeBtn} ${timeLimit === 60 ? styles.active : ''}`} onClick={() => setTimeLimit(60)}>60s</button>
+                            <button className={`${styles.modeBtn} ${timeLimit === 120 ? styles.active : ''}`} onClick={() => setTimeLimit(120)}>120s</button>
+                        </div>
                     )}
-
-                    <div className={styles.divider}>|</div>
 
                     <div className={styles.group}>
                         {[
@@ -157,31 +223,51 @@ export default function TypingTest() {
                             </button>
                         ))}
                     </div>
+
+                    {/* Theme Toggle */}
+                    <button className={styles.themeToggle} onClick={toggleTheme} title="Toggle Theme">
+                        {theme === 'light' ? (
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                            </svg>
+                        ) : (
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="5"></circle>
+                                <line x1="12" y1="1" x2="12" y2="3"></line>
+                                <line x1="12" y1="21" x2="12" y2="23"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                <line x1="1" y1="12" x2="3" y2="12"></line>
+                                <line x1="21" y1="12" x2="23" y2="12"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                            </svg>
+                        )}
+                    </button>
                 </div>
 
                 <div className={styles.stats}>
                     {mode === 'time' && gameState !== 'finish' && <span className={styles.timer}>{timeLeft}s</span>}
-                    {mode === 'time' && gameState !== 'idle' && (
+                    {mode === 'time' && gameState === 'finish' && (
                         <span>{wpm} <span style={{ fontSize: '0.8em', opacity: 0.7 }}>wpm</span></span>
                     )}
                     {gameState === 'start' && (
                         <button
                             className={styles.modeBtn}
-                            style={{ color: 'var(--error-color)', marginLeft: '1rem', border: '1px solid var(--error-color)', borderRadius: '4px' }}
+                            style={{ color: 'var(--error-color)', border: '1px solid var(--error-color)' }}
                             onClick={stopGame}
                         >
                             STOP
                         </button>
                     )}
+                    <button
+                        className={`${styles.modeBtn} ${isGameMode ? styles.active : ''}`}
+                        style={{ color: 'var(--error-color)', fontWeight: 'bold' }}
+                        onClick={() => setIsGameMode(true)}
+                    >
+                        GAME MODE
+                    </button>
                 </div>
-
-                <button
-                    className={`${styles.modeBtn} ${isGameMode ? styles.active : ''}`}
-                    style={{ color: 'var(--error-color)', fontWeight: 'bold', marginLeft: 'auto' }}
-                    onClick={() => setIsGameMode(true)}
-                >
-                    GAME MODE
-                </button>
             </div>
 
             <div
@@ -189,18 +275,15 @@ export default function TypingTest() {
                 className={`${styles.wordsContainer} ${gameState === 'finish' ? styles.hidden : ''} ${mode === 'document' ? styles.documentMode : ''}`}
             >
                 {words.map((word, wIdx) => {
-                    // Check if this word has any incorrect letters typed so far
                     const hasError = word.letters.some(l => l.status === 'incorrect');
 
                     return (
                         <div key={wIdx} id={`word-${wIdx}`} className={`${styles.word} ${hasError ? styles.wordError : ''}`}>
                             {word.letters.map((letter, lIdx) => {
-                                const isCursor = cursorIndex.wordIndex === wIdx && cursorIndex.letterIndex === lIdx;
-
+                                // Removed structural cursor class from here to prevent layout shift/breaking
                                 let className = styles.letter;
                                 if (letter.status === 'correct') className += ` ${styles.correct}`;
                                 if (letter.status === 'incorrect') className += ` ${styles.incorrect}`;
-                                if (isCursor) className += ` ${styles.cursor}`;
 
                                 return (
                                     <span key={lIdx} className={className}>
@@ -211,6 +294,8 @@ export default function TypingTest() {
                         </div>
                     );
                 })}
+                {/* Floating Caret */}
+                <div ref={caretRef} className={styles.caret} />
             </div>
 
             {/* Results Screen (Overlay) */}
