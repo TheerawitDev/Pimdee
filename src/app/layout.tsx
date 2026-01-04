@@ -20,13 +20,18 @@ const robotoMono = Roboto_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Pimdee - Thai Typing Practice",
-  description: "Minimalist Thai and English typing practice application. Improve your wpm and accuracy.",
-  keywords: ["typing practice", "thai typing", "pimdee", "typing test", "wpm", "touch typing"],
+  title: "Pimdee - ฝึกพิมพ์ไทย เรียนพิมพ์ดีดออนไลน์ Typing Practice",
+  description: "ฝึกพิมพ์ไทยและอังกฤษแบบออนไลน์ ฟรี! เพิ่มความเร็วในการพิมพ์ของคุณด้วยบทเรียนและเกมฝึกพิมพ์ที่ทันสมัย Minimalist Thai and English typing practice application.",
+  keywords: [
+    "typing practice", "thai typing", "pimdee", "typing test", "wpm", "touch typing",
+    "ฝึกพิมพ์ไทย", "ฝึกพิมพ์ดีด", "พิมพ์ดีดออนไลน์", "ฝึกพิมพ์เร็ว", "เกมฝึกพิมพ์",
+    "หัดพิมพ์", "แป้นพิมพ์ภาษาไทย", "เรียนพิมพ์ดีด", "ทดสอบความเร็วในการพิมพ์", "พิมพ์สัมผัส",
+    "ฝึกพิมพ์", "เรียนพิมพ์"
+  ],
   authors: [{ name: "Pimdee Team" }],
   openGraph: {
-    title: "Pimdee - Thai Typing Practice",
-    description: "Minimalist Thai and English typing practice application.",
+    title: "Pimdee - ฝึกพิมพ์ไทย เรียนพิมพ์ดีดออนไลน์",
+    description: "ฝึกพิมพ์ไทยและอังกฤษแบบออนไลน์ ฟรี! เพิ่มความเร็วในการพิมพ์ของคุณด้วยบทเรียนและเกมฝึกพิมพ์ที่ทันสมัย",
     type: "website",
   },
 };
