@@ -29,7 +29,8 @@ export const useTypingEngine = () => {
     // Metrics
     const [startTime, setStartTime] = useState<number | null>(null);
     const [wpm, setWpm] = useState(0);
-    const [accuracy, setAccuracy] = useState(100);
+    // accuracy is derived now
+    // const [accuracy, setAccuracy] = useState(100);
     const [correctKeyStrokes, setCorrectKeyStrokes] = useState(0);
     const [totalKeyStrokes, setTotalKeyStrokes] = useState(0);
 
@@ -54,7 +55,7 @@ export const useTypingEngine = () => {
         setCursorIndex({ wordIndex: 0, letterIndex: 0 });
         setStartTime(null);
         setWpm(0);
-        setAccuracy(100);
+        // setAccuracy(100); // Derived now
         setCorrectKeyStrokes(0);
         setTotalKeyStrokes(0);
 
@@ -163,6 +164,10 @@ export const useTypingEngine = () => {
 
     }, [gameState, cursorIndex, mode, language, difficulty]);
 
+    // Accuracy is derived
+    const accuracy = totalKeyStrokes > 0 ? Math.round((correctKeyStrokes / totalKeyStrokes) * 100) : 100;
+
+    /*
     useEffect(() => {
         if (totalKeyStrokes > 0) {
             const acc = Math.round((correctKeyStrokes / totalKeyStrokes) * 100);
@@ -171,6 +176,7 @@ export const useTypingEngine = () => {
             setAccuracy(100);
         }
     }, [correctKeyStrokes, totalKeyStrokes]);
+    */
 
     // Timer & WPM
     useEffect(() => {
