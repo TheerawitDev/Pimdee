@@ -1,0 +1,108 @@
+.gameContainer {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    background: linear-gradient(to bottom, #f0f4f8, #d9e2ec);
+    border-radius: 12px;
+    overflow: hidden;
+    font-family: 'Courier New', Courier, monospace;
+    border: 2px solid var(--sub-color);
+}
+
+.hud {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--main-color);
+    z-index: 10;
+}
+
+.player {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 60px;
+    background-color: var(--main-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.enemy {
+    position: absolute;
+    transform: translateX(-50%);
+    background: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border: 2px solid var(--error-color);
+    transition: top 0.1s linear;
+}
+
+.word {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #555;
+}
+
+.matched {
+    color: var(--main-color);
+}
+
+.unmatched {
+    color: #333;
+}
+
+.target {
+    border-color: var(--main-color);
+    background-color: #e6ffFA;
+    transform: translateX(-50%) scale(1.1);
+    z-index: 5;
+}
+
+.gameOver {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+}
+
+.title {
+    font-size: 3rem;
+    color: var(--error-color);
+    margin-bottom: 1rem;
+}
+
+.score {
+    font-size: 2rem;
+    color: var(--main-color);
+    margin-bottom: 2rem;
+}
+
+.restartBtn {
+    padding: 1rem 2rem;
+    font-size: 1.5rem;
+    background: var(--main-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}

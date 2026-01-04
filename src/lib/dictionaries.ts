@@ -58,6 +58,19 @@ export const dictionaries: Record<Language, Record<Difficulty, string[]>> = {
     }
 };
 
+export const documents: Record<Language, string[]> = {
+    english: [
+        "The quick brown fox jumps over the lazy dog. This is a classic pangram containing every letter of the alphabet. Typing fast is a skill that requires practice and patience.",
+        "To be, or not to be, that is the question: Whether 'tis nobler in the mind to suffer The slings and arrows of outrageous fortune, Or to take arms against a sea of troubles And by opposing end them.",
+        "Technology is constantly evolving, changing the way we live and work. From artificial intelligence to renewable energy, the future holds endless possibilities for innovation."
+    ],
+    thai: [
+        "การพิมพ์สัมผัสเป็นทักษะที่มีประโยชน์มากในยุคดิจิทัล ช่วยให้เราทำงานได้รวดเร็วและมีประสิทธิภาพมากขึ้น การฝึกฝนอย่างสม่ำเสมอจะช่วยพัฒนาความแม่นยำและความเร็ว",
+        "ประเทศไทยมีสถานที่ท่องเที่ยวที่สวยงามมากมาย ทั้งภูเขา ทะเล และวัดวาอาราม วัฒนธรรมไทยมีความเป็นเอกลักษณ์และน่าสนใจ อาหารไทยก็มีชื่อเสียงไปทั่วโลก",
+        "การเรียนรู้ตลอดชีวิตเป็นสิ่งสำคัญ การอ่านหนังสือและการแสวงหาความรู้ใหม่ๆ จะช่วยเปิดโลกทัศน์และพัฒนาตนเองให้ทันต่อการเปลี่ยนแปลงของโลก"
+    ]
+};
+
 export const getRandomWords = (lang: Language, difficulty: Difficulty, count: number): string[] => {
     const wordList = dictionaries[lang][difficulty];
     const words: string[] = [];
@@ -66,4 +79,10 @@ export const getRandomWords = (lang: Language, difficulty: Difficulty, count: nu
         words.push(wordList[randomIndex]);
     }
     return words;
+};
+
+export const getRandomDocument = (lang: Language): string => {
+    const docList = documents[lang];
+    const randomIndex = Math.floor(Math.random() * docList.length);
+    return docList[randomIndex];
 };

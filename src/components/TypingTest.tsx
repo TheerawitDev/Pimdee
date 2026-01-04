@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTypingEngine } from "@/hooks/useTypingEngine";
 import { Difficulty } from "@/lib/dictionaries";
 import styles from "./TypingTest.module.css";
+import MonsterGame from "./MonsterGame";
 
 export default function TypingTest() {
     const {
@@ -17,14 +18,21 @@ export default function TypingTest() {
         language,
         setLanguage,
         difficulty,
-        setDifficulty
+        setDifficulty,
+        mode,
+        setMode,
+        timeLimit,
+        setTimeLimit,
+        timeLeft
     } = useTypingEngine();
 
+    const [isGameMode, setIsGameMode] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
-    const [isFocused, setIsFocused] = useState(false);
 
-    // Handle Global Keydown
+    // Handle Global Keydown (Only if NOT in game mode)
     useEffect(() => {
+        if (isGameMode) return;
+
         const handleKeyDown = (e: KeyboardEvent) => {
             // Ignore functional keys unless it's Backspace
             if (e.ctrlKey || e.altKey || e.metaKey) return;
@@ -47,50 +55,103 @@ export default function TypingTest() {
 
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [handleInput, resetGame, gameState]);
+    }, [handleInput, resetGame, gameState, isGameMode]);
+
+    if (isGameMode) {
+        return <MonsterGame onExit={() => setIsGameMode(false)} />;
+    }
 
     return (
         <div className={styles.wrapper}>
             {/* Header / Stats */}
             <div className={styles.header}>
                 <div className={styles.modes}>
-                    <button
-                        className={`${styles.modeBtn} ${language === 'english' ? styles.active : ''}`}
-                        onClick={() => { setLanguage('english'); resetGame(); }}
-                    >
-                        English
-                    </button>
-                    <button
-                        className={`${styles.modeBtn} ${language === 'thai' ? styles.active : ''}`}
-                        onClick={() => { setLanguage('thai'); resetGame(); }}
-                    >
-                        Thai
-                    </button>
+                    <div className={styles.group}>
+                        <button
+                            className={`${styles.modeBtn} ${language === 'english' ? styles.active : ''}`}
+                            onClick={() => { setLanguage('english'); resetGame(); }}
+                        >
+                            ENG
+                        </button>
+                        <button
+                            className={`${styles.modeBtn} ${language === 'thai' ? styles.active : ''}`}
+                            onClick={() => { setLanguage('thai'); resetGame(); }}
+                        >
+                            TH
+                        </button>
+                    </div>
 
                     <div className={styles.divider}>|</div>
 
-                    {[
-                        { id: 'starter', en: 'Beginner', th: 'เริ่มต้น' },
-                        { id: 'elementary', en: 'Elementary', th: 'พื้นฐาน' },
-                        { id: 'intermediate', en: 'Intermediate', th: 'ปานกลาง' },
-                        { id: 'advanced', en: 'Advanced', th: 'สูง' },
-                        { id: 'master', en: 'Master', th: 'เชี่ยวชาญ' }
-                    ].map((lvl) => (
+                    <div className={styles.group}>
                         <button
-                            key={lvl.id}
-                            className={`${styles.modeBtn} ${difficulty === lvl.id ? styles.active : ''}`}
-                            onClick={() => { setDifficulty(lvl.id as Difficulty); resetGame(); }}
+                            className={`${styles.modeBtn} ${mode === 'standard' ? styles.active : ''}`}
+                            onClick={() => { setMode('standard'); resetGame(); }}
                         >
-                            {language === 'thai' ? lvl.th : lvl.en}
+                            Words
                         </button>
-                    ))}
+                        <button
+                            className={`${styles.modeBtn} ${mode === 'time' ? styles.active : ''}`}
+                            onClick={() => { setMode('time'); resetGame(); }}
+                        >
+                            Time
+                        </button>
+                        <button
+                            className={`${styles.modeBtn} ${mode === 'document' ? styles.active : ''}`}
+                            onClick={() => { setMode('document'); resetGame(); }}
+                        >
+                            Document
+                        </button>
+                    </div>
+
+                    <div className={styles.divider}>|</div>
+
+                    <button
+                        className={`${styles.modeBtn} ${isGameMode ? styles.active : ''}`}
+                        style={{ color: 'var(--error-color)', fontWeight: 'bold' }}
+                        onClick={() => setIsGameMode(true)}
+                    >
+                        GAME MODE
+                    </button>
+
+                    {mode === 'time' && (
+                        <>
+                            <div className={styles.divider}>|</div>
+                            <div className={styles.group}>
+                                <button className={`${styles.modeBtn} ${timeLimit === 30 ? styles.active : ''}`} onClick={() => { setTimeLimit(30); resetGame(); }}>30s</button>
+                                <button className={`${styles.modeBtn} ${timeLimit === 60 ? styles.active : ''}`} onClick={() => { setTimeLimit(60); resetGame(); }}>60s</button>
+                                <button className={`${styles.modeBtn} ${timeLimit === 120 ? styles.active : ''}`} onClick={() => { setTimeLimit(120); resetGame(); }}>120s</button>
+                            </div>
+                        </>
+                    )}
+
+                    <div className={styles.divider}>|</div>
+
+                    <div className={styles.group}>
+                        {[
+                            { id: 'starter', en: 'Beginner', th: 'เริ่มต้น' },
+                            { id: 'elementary', en: 'Elementary', th: 'พื้นฐาน' },
+                            { id: 'intermediate', en: 'Intermediate', th: 'ปานกลาง' },
+                            { id: 'advanced', en: 'Advanced', th: 'สูง' },
+                            { id: 'master', en: 'Master', th: 'เชี่ยวชาญ' }
+                        ].map((lvl) => (
+                            <button
+                                key={lvl.id}
+                                className={`${styles.modeBtn} ${difficulty === lvl.id ? styles.active : ''}`}
+                                onClick={() => { setDifficulty(lvl.id as Difficulty); resetGame(); }}
+                            >
+                                {language === 'thai' ? lvl.th : lvl.en}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
-                {gameState === 'start' || gameState === 'finish' ? (
-                    <div className={styles.stats}>
-                        {wpm} <span style={{ fontSize: '0.8em', opacity: 0.7 }}>wpm</span>
-                    </div>
-                ) : null}
+                <div className={styles.stats}>
+                    {mode === 'time' && gameState !== 'finish' && <span className={styles.timer}>{timeLeft}s</span>}
+                    {gameState !== 'idle' && (
+                        <span>{wpm} <span style={{ fontSize: '0.8em', opacity: 0.7 }}>wpm</span></span>
+                    )}
+                </div>
             </div>
 
             {/* Typing Area */}

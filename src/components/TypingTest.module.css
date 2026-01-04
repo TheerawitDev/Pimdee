@@ -15,10 +15,23 @@
 
 .modes {
     display: flex;
-    gap: 0.5rem;
-    background: rgba(0, 0, 0, 0.1);
-    padding: 0.5rem;
-    border-radius: 8px;
+    gap: 1rem;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.05);
+    /* Lighter bg */
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+}
+
+.group {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.timer {
+    color: var(--main-color);
+    font-weight: bold;
+    margin-right: 1.5rem;
 }
 
 .modeBtn {
