@@ -69,13 +69,13 @@ export default function TypingTest() {
                     <div className={styles.group}>
                         <button
                             className={`${styles.modeBtn} ${language === 'english' ? styles.active : ''}`}
-                            onClick={() => { setLanguage('english'); resetGame(); }}
+                            onClick={() => setLanguage('english')}
                         >
                             ENG
                         </button>
                         <button
                             className={`${styles.modeBtn} ${language === 'thai' ? styles.active : ''}`}
-                            onClick={() => { setLanguage('thai'); resetGame(); }}
+                            onClick={() => setLanguage('thai')}
                         >
                             TH
                         </button>
@@ -86,19 +86,19 @@ export default function TypingTest() {
                     <div className={styles.group}>
                         <button
                             className={`${styles.modeBtn} ${mode === 'standard' ? styles.active : ''}`}
-                            onClick={() => { setMode('standard'); resetGame(); }}
+                            onClick={() => setMode('standard')}
                         >
                             Words
                         </button>
                         <button
                             className={`${styles.modeBtn} ${mode === 'time' ? styles.active : ''}`}
-                            onClick={() => { setMode('time'); resetGame(); }}
+                            onClick={() => setMode('time')}
                         >
                             Time
                         </button>
                         <button
                             className={`${styles.modeBtn} ${mode === 'document' ? styles.active : ''}`}
-                            onClick={() => { setMode('document'); resetGame(); }}
+                            onClick={() => setMode('document')}
                         >
                             Document
                         </button>
@@ -118,9 +118,9 @@ export default function TypingTest() {
                         <>
                             <div className={styles.divider}>|</div>
                             <div className={styles.group}>
-                                <button className={`${styles.modeBtn} ${timeLimit === 30 ? styles.active : ''}`} onClick={() => { setTimeLimit(30); resetGame(); }}>30s</button>
-                                <button className={`${styles.modeBtn} ${timeLimit === 60 ? styles.active : ''}`} onClick={() => { setTimeLimit(60); resetGame(); }}>60s</button>
-                                <button className={`${styles.modeBtn} ${timeLimit === 120 ? styles.active : ''}`} onClick={() => { setTimeLimit(120); resetGame(); }}>120s</button>
+                                <button className={`${styles.modeBtn} ${timeLimit === 30 ? styles.active : ''}`} onClick={() => setTimeLimit(30)}>30s</button>
+                                <button className={`${styles.modeBtn} ${timeLimit === 60 ? styles.active : ''}`} onClick={() => setTimeLimit(60)}>60s</button>
+                                <button className={`${styles.modeBtn} ${timeLimit === 120 ? styles.active : ''}`} onClick={() => setTimeLimit(120)}>120s</button>
                             </div>
                         </>
                     )}
@@ -138,7 +138,7 @@ export default function TypingTest() {
                             <button
                                 key={lvl.id}
                                 className={`${styles.modeBtn} ${difficulty === lvl.id ? styles.active : ''}`}
-                                onClick={() => { setDifficulty(lvl.id as Difficulty); resetGame(); }}
+                                onClick={() => setDifficulty(lvl.id as Difficulty)}
                             >
                                 {language === 'thai' ? lvl.th : lvl.en}
                             </button>

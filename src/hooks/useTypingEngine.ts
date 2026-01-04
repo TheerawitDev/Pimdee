@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { getRandomWords, getRandomDocument, Language, Difficulty } from '@/lib/dictionaries';
 
 export type TypingState = 'idle' | 'start' | 'finish';
@@ -31,7 +31,7 @@ export const useTypingEngine = () => {
     const [wpm, setWpm] = useState(0);
     const [accuracy, setAccuracy] = useState(100);
     const [correctKeyStrokes, setCorrectKeyStrokes] = useState(0);
-    const [totalKeyStrokes, setTotalKeyStrokes] = useState(0);
+
 
     const resetGame = useCallback(() => {
         let newWordsStrings: string[] = [];
@@ -55,7 +55,7 @@ export const useTypingEngine = () => {
         setWpm(0);
         setAccuracy(100);
         setCorrectKeyStrokes(0);
-        setTotalKeyStrokes(0);
+
 
         // Reset Timer
         setTimeLeft(timeLimit);
@@ -64,6 +64,7 @@ export const useTypingEngine = () => {
     // Initial load
     useEffect(() => {
         resetGame();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [resetGame]);
 
     const handleInput = useCallback((key: string) => {
@@ -74,17 +75,20 @@ export const useTypingEngine = () => {
             setStartTime(Date.now());
         }
 
-        setTotalKeyStrokes(prev => prev + 1);
-
         setWords(prevWords => {
-            const newWords = [...prevWords];
+            let newWords = [...prevWords];
             const currentWordIndex = cursorIndex.wordIndex;
             const currentLetterIndex = cursorIndex.letterIndex;
             const currentWord = newWords[currentWordIndex];
 
-            // Auto-generate more words if near end
-            if (currentWordIndex > newWords.length - 10) {
-                // Future improvement: Infinite scroll generation
+            // Auto-generate more words if near end (only if NOT document mode, assuming random words)
+            // For Time Mode or Standard (if we want infinite standard)
+            if (mode === 'time' && currentWordIndex > newWords.length - 20) {
+                const moreWordsStrings = getRandomWords(language, difficulty, 20);
+                const moreWords = moreWordsStrings.map(str => ({
+                    letters: str.split('').map(char => ({ char, status: 'pending' } as Letter))
+                }));
+                newWords = [...newWords, ...moreWords];
             }
 
             // Handle Backspace
@@ -124,6 +128,8 @@ export const useTypingEngine = () => {
 
                     if (currentLetterIndex === currentWord.letters.length - 1 && currentWordIndex === newWords.length - 1) {
                         if (mode === 'standard') setGameState('finish');
+                        // For time mode, we just wait for more words to generate or if logic failed, we stop.
+                        // But the generation logic at top should prevent this.
                     } else {
                         setCursorIndex({ wordIndex: currentWordIndex, letterIndex: currentLetterIndex + 1 });
                     }
@@ -133,7 +139,7 @@ export const useTypingEngine = () => {
             return newWords;
         });
 
-    }, [gameState, cursorIndex, mode]);
+    }, [gameState, cursorIndex, mode, language, difficulty]);
 
     // Timer & WPM
     useEffect(() => {

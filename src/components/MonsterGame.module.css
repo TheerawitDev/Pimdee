@@ -5,7 +5,7 @@
     background: linear-gradient(to bottom, #f0f4f8, #d9e2ec);
     border-radius: 12px;
     overflow: hidden;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: var(--font-primary);
     border: 2px solid var(--sub-color);
 }
 

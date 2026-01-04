@@ -18,7 +18,7 @@ export default function MonsterGame({ onExit }: { onExit: () => void }) {
     const [score, setScore] = useState(0);
     const [lives, setLives] = useState(3);
     const [gameOver, setGameOver] = useState(false);
-    const requestRef = useRef<number>();
+    const requestRef = useRef<number | null>(null);
     const lastSpawnTime = useRef<number>(0);
     const containerRef = useRef<HTMLDivElement>(null);
     const spawnRate = useRef(2000); // ms
@@ -149,7 +149,7 @@ export default function MonsterGame({ onExit }: { onExit: () => void }) {
             <div className={styles.hud}>
                 <span>Score: {score}</span>
                 <span onClick={onExit} style={{ cursor: 'pointer' }}>EXIT</span>
-                <span>Lives: {"❤️".repeat(lives)}</span>
+                <span>Lives: {"❤️".repeat(Math.max(0, lives))}</span>
             </div>
 
             {enemies.map(enemy => (
