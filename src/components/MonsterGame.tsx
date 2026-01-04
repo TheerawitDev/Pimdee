@@ -11,10 +11,12 @@ interface Enemy {
     y: number; // Pixels
     speed: number;
     matchedIndex: number; // How many letters matched
-    type: 'slime' | 'bat' | 'ghost';
+    type: 'slime' | 'bat' | 'ghost' | 'spider' | 'skeleton' | 'wolf';
     shake: boolean;
     maxHealth: number;
     currentHealth: number;
+    dying: boolean;
+    deathTime: number;
 }
 
 interface Particle {
@@ -26,6 +28,7 @@ interface Particle {
 
 export default function MonsterGame({ onExit, language, difficulty }: { onExit: () => void, language: Language, difficulty: Difficulty }) {
     const [enemies, setEnemies] = useState<Enemy[]>([]);
+    const [dyingEnemies, setDyingEnemies] = useState<Enemy[]>([]);
     const [score, setScore] = useState(0);
     const [lives, setLives] = useState(3);
     const [gameOver, setGameOver] = useState(false);
@@ -45,12 +48,12 @@ export default function MonsterGame({ onExit, language, difficulty }: { onExit: 
 
     const getDifficultyStats = () => {
         switch (difficulty) {
-            case 'starter': return { speed: 0.3, spawn: 2500, scoreMult: 0.5 };
-            case 'elementary': return { speed: 0.5, spawn: 2000, scoreMult: 0.8 };
-            case 'intermediate': return { speed: 0.8, spawn: 1800, scoreMult: 1 };
-            case 'advanced': return { speed: 1.2, spawn: 1500, scoreMult: 1.5 };
-            case 'master': return { speed: 2.0, spawn: 1000, scoreMult: 2.5 };
-            default: return { speed: 0.5, spawn: 2000, scoreMult: 1 };
+            case 'starter': return { speed: 0.1, spawn: 3000, scoreMult: 0.5 };
+            case 'elementary': return { speed: 0.25, spawn: 2500, scoreMult: 0.8 };
+            case 'intermediate': return { speed: 0.5, spawn: 2200, scoreMult: 1 };
+            case 'advanced': return { speed: 0.9, spawn: 1800, scoreMult: 1.5 };
+            case 'master': return { speed: 1.5, spawn: 1400, scoreMult: 2.5 };
+            default: return { speed: 0.3, spawn: 2500, scoreMult: 1 };
         }
     };
 
@@ -63,7 +66,7 @@ export default function MonsterGame({ onExit, language, difficulty }: { onExit: 
         const { speed: diffSpeed, spawn: diffSpawn } = getDifficultyStats();
 
         let baseSpeed = diffSpeed;
-        if (type === 'bat') baseSpeed *= 1.2;
+        if (type === 'bat') baseSpeed *= 1.2; // Reduced bat multiplier
         if (type === 'ghost') baseSpeed *= 0.8;
 
         const newEnemy: Enemy = {
@@ -71,17 +74,19 @@ export default function MonsterGame({ onExit, language, difficulty }: { onExit: 
             word: word,
             x: Math.random() * 80 + 10,
             y: -50,
-            speed: baseSpeed + (Math.random() * 0.2) + (score * 0.002),
+            speed: baseSpeed + (Math.random() * 0.1) + (score * 0.0002),
             matchedIndex: 0,
             type,
             shake: false,
             maxHealth: word.length,
-            currentHealth: word.length
+            currentHealth: word.length,
+            dying: false,
+            deathTime: 0
         };
         setEnemies(prev => [...prev, newEnemy]);
         lastSpawnTime.current = time;
         // Cap spawn rate 
-        spawnRate.current = Math.max(500, diffSpawn - (score * 10));
+        spawnRate.current = Math.max(800, diffSpawn - (score * 2));
     }, [score, difficulty, language]);
 
     const createParticle = (x: number, y: number, text: string) => {
@@ -96,16 +101,18 @@ export default function MonsterGame({ onExit, language, difficulty }: { onExit: 
     const animate = useCallback(function tick(time: number) {
         if (gameOver) return;
 
+        // 1. Update Living Enemies
         setEnemies(prevEnemies => {
-            const newEnemies = prevEnemies.map(e => ({
+            return prevEnemies.map(e => ({
                 ...e,
                 y: e.y + e.speed,
-                shake: false // Reset shake frame
+                shake: false // Reset shake
             })).filter(e => {
-                const hitLimit = 480; // Ground level approx
+                // Check bounds
+                const hitLimit = 480;
                 if (e.y > hitLimit) {
                     setLives(l => l - 1);
-                    setCombo(0); // Reset combo on hit
+                    setCombo(0);
                     if (activeEnemyId.current === e.id) {
                         activeEnemyId.current = null;
                     }
@@ -113,7 +120,12 @@ export default function MonsterGame({ onExit, language, difficulty }: { onExit: 
                 }
                 return true;
             });
-            return newEnemies;
+        });
+
+        // 2. Update Dying Enemies
+        setDyingEnemies(prev => {
+            const now = performance.now();
+            return prev.filter(e => (now - e.deathTime) < 500);
         });
 
         if (time - lastSpawnTime.current > spawnRate.current) {
@@ -137,6 +149,13 @@ export default function MonsterGame({ onExit, language, difficulty }: { onExit: 
         }
     }, [lives]);
 
+    const enemiesRef = useRef<Enemy[]>([]);
+
+    // Sync ref with state
+    useEffect(() => {
+        enemiesRef.current = enemies;
+    }, [enemies]);
+
     // --- Input Handling ---
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -144,64 +163,87 @@ export default function MonsterGame({ onExit, language, difficulty }: { onExit: 
             const char = e.key;
             if (char.length !== 1) return;
 
-            setEnemies(prev => {
-                let targetId = activeEnemyId.current;
-                const newEnemies = [...prev];
+            const currentEnemies = enemiesRef.current;
+            let targetId = activeEnemyId.current;
 
-                // Find target if none active
-                if (targetId === null) {
-                    const candidates = newEnemies
-                        .filter(e => e.word.startsWith(char))
-                        .sort((a, b) => b.y - a.y); // Closest to bottom first
+            // 1. Find Target if needed
+            if (targetId === null) {
+                const candidates = currentEnemies
+                    .filter(e => e.word.startsWith(char))
+                    .sort((a, b) => b.y - a.y);
 
-                    if (candidates.length > 0) {
-                        targetId = candidates[0].id;
-                        activeEnemyId.current = targetId;
-                    } else {
-                        // Missed (no enemy starts with char)
-                        setCombo(0);
-                        return prev;
-                    }
+                if (candidates.length > 0) {
+                    targetId = candidates[0].id;
+                    activeEnemyId.current = targetId;
+                } else {
+                    setCombo(0);
+                    return; // Missed
                 }
+            }
 
-                // Process Attack
-                if (targetId !== null) {
-                    const idx = newEnemies.findIndex(e => e.id === targetId);
-                    if (idx !== -1) {
-                        const enemy = newEnemies[idx];
-                        if (enemy.word[enemy.matchedIndex] === char) {
-                            // HIT!
-                            enemy.matchedIndex++;
-                            enemy.shake = true; // Visual feedback
+            // 2. Process Attack
+            if (targetId !== null) {
+                const idx = currentEnemies.findIndex(e => e.id === targetId);
 
-                            // Sword Animation
-                            setIsAttacking(true);
-                            setTimeout(() => setIsAttacking(false), 150);
+                if (idx !== -1) {
+                    const enemy = currentEnemies[idx];
 
-                            if (enemy.matchedIndex === enemy.word.length) {
-                                // KILLED
-                                createParticle(enemy.x, enemy.y, `+${10 + combo}`);
-                                newEnemies.splice(idx, 1);
-                                setScore(s => s + 10 + combo);
-                                setCombo(c => c + 1);
-                                activeEnemyId.current = null;
-                            }
+                    if (enemy.word[enemy.matchedIndex] === char) {
+                        // HIT
+                        const nextIndex = enemy.matchedIndex + 1;
+                        const isDead = nextIndex === enemy.word.length;
+
+                        // Visuals
+                        setIsAttacking(true);
+                        setTimeout(() => setIsAttacking(false), 150);
+
+                        if (isDead) {
+                            // KILL LOGIC
+                            createParticle(enemy.x, enemy.y, `+${10 + combo}`);
+                            setScore(s => s + 10 + combo);
+                            setCombo(c => c + 1);
+                            activeEnemyId.current = null;
+
+                            // 1. Add to dying
+                            const dyingEnemy = {
+                                ...enemy,
+                                matchedIndex: nextIndex,
+                                dying: true,
+                                deathTime: performance.now()
+                            };
+                            setDyingEnemies(prev => [...prev, dyingEnemy]);
+
+                            // 2. Remove from living (Use functional update to be safe against race with animate)
+                            setEnemies(prev => prev.filter(e => e.id !== targetId));
+
                         } else {
-                            // Missed active target
-                            // Maybe add penalty? For now just reset combo
-                            // setCombo(0); 
-                            // Actually, strict typing usually doesn't fail unless you mistype current letter
+                            // HIT LOGIC (Update matched index)
+                            // Use functional update to ensure we modify the LATEST position from animate loop
+                            setEnemies(prev => prev.map(e => {
+                                if (e.id === targetId) {
+                                    return {
+                                        ...e,
+                                        matchedIndex: nextIndex,
+                                        shake: true
+                                    };
+                                }
+                                return e;
+                            }));
                         }
+                    } else {
+                        // Wrong key for current target
+                        // Optional: Penalty or shake?
                     }
+                } else {
+                    // Target gone (maybe hit bottom)
+                    activeEnemyId.current = null;
                 }
-
-                return newEnemies;
-            });
+            }
         };
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [gameOver, combo]); // Added combo deps to update score calc correctly
+    }, [gameOver, combo]); // enemiesRef handles the enemies dependency
 
     const handleRestart = () => {
         setEnemies([]);
@@ -246,6 +288,21 @@ export default function MonsterGame({ onExit, language, difficulty }: { onExit: 
                         <span className={styles.matched}>{enemy.word.substring(0, enemy.matchedIndex)}</span>
                         <span className={styles.unmatched}>{enemy.word.substring(enemy.matchedIndex)}</span>
                     </div>
+                </div>
+            ))}
+
+            {/* Dying Enemies (Visual Only) */}
+            {dyingEnemies.map(enemy => (
+                <div
+                    key={`dying-${enemy.id}`}
+                    className={`${styles.enemy} ${styles.dying}`}
+                    style={{
+                        left: `${enemy.x}%`,
+                        top: `${enemy.y}px`
+                    }}
+                    data-type={enemy.type}
+                >
+                    <div className={styles.enemySprite}></div>
                 </div>
             ))}
 

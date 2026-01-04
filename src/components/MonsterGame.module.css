@@ -224,6 +224,29 @@
     opacity: 0.9;
 }
 
+/* Dying Animation */
+.dying {
+    animation: die 0.3s ease-out forwards !important;
+}
+
+@keyframes die {
+    0% {
+        transform: translateX(-50%) scale(1);
+        filter: brightness(1.5) grayscale(0);
+    }
+
+    50% {
+        transform: translateX(-50%) scale(1.2);
+        filter: brightness(2) grayscale(1);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: translateX(-50%) scale(0);
+        opacity: 0;
+    }
+}
+
 /* Eyes common to all */
 .enemySprite::after {
     content: '••';
