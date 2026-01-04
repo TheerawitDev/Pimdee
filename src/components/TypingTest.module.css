@@ -8,30 +8,38 @@
 .header {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
+    /* changed from center to allow multiline if needed, or stick to center */
     align-items: center;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
     color: var(--sub-color);
 }
 
-.modes {
+.configBar {
     display: flex;
-    gap: 1rem;
+    gap: 1.5rem;
     align-items: center;
-    background: rgba(0, 0, 0, 0.05);
-    /* Lighter bg */
-    padding: 0.5rem 1rem;
-    border-radius: 12px;
+    background: var(--bg-color);
+    /* Match bg, or slightly offset */
+    font-size: 0.9rem;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    opacity: 1;
+    visibility: visible;
+}
+
+.configBar.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
 }
 
 .group {
     display: flex;
     gap: 0.25rem;
-}
-
-.timer {
-    color: var(--main-color);
-    font-weight: bold;
-    margin-right: 1.5rem;
+    background: rgba(127, 127, 127, 0.1);
+    /* Subtle container bg */
+    padding: 0.25rem;
+    border-radius: 8px;
 }
 
 .modeBtn {
@@ -40,9 +48,10 @@
     color: var(--sub-color);
     cursor: pointer;
     font-family: inherit;
-    font-size: 0.9rem;
-    padding: 0.25rem 0.5rem;
-    transition: color 0.2s;
+    font-size: 0.85rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
 }
 
 .modeBtn:hover {
@@ -50,36 +59,68 @@
 }
 
 .modeBtn.active {
-    color: var(--main-color);
-    font-weight: bold;
+    color: var(--bg-color);
+    /* Contrast text */
+    background-color: var(--text-color);
+    /* Dark/Light active bg */
+    font-weight: 500;
 }
 
-.divider {
-    width: 1px;
-    background-color: var(--sub-color);
-    margin: 0 0.5rem;
-    opacity: 0.3;
+
+/* Theme Toggle specific */
+.themeToggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--sub-color);
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+    margin-left: 1rem;
+}
+
+.themeToggle:hover {
+    color: var(--text-color);
 }
 
 .stats {
+    display: flex;
+    align-items: center;
     font-size: 1.5rem;
     color: var(--main-color);
+    gap: 3rem;
+    /* Increased from 1.5rem */
+}
+
+.timer {
+    margin: 0 1rem;
+    font-variant-numeric: tabular-nums;
 }
 
 .wordsContainer {
     display: flex;
     flex-wrap: wrap;
-    gap: 1.2rem;
-    /* Space between words */
-    font-size: 2.5rem;
-    /* Large readable text */
+    gap: 0.6em;
+    font-size: 1.7rem;
+    /* Adjusted size */
     line-height: 1.5;
     user-select: none;
     outline: none;
-    height: 150px;
-    /* Fixed height to prevent layout shift */
+    height: 4.5em;
+    /* 3 lines roughly */
     overflow: hidden;
     position: relative;
+    align-content: flex-start;
+    padding: 0.1em 5px;
+    font-family: var(--font-mono);
+    /* Ensure mono for alignment if desired, but user likes sans usually. Keeping inherited. */
+}
+
+.wordsContainer.documentMode {
+    column-gap: 0.3em;
+    row-gap: 0.2em;
 }
 
 .wordsContainer.hidden {
@@ -88,12 +129,17 @@
 }
 
 .word {
-    display: flex;
-    margin-right: 0.5rem;
+    white-space: nowrap;
+    position: relative;
+    border-bottom: 2px solid transparent;
+    margin-bottom: 0.2em;
+}
+
+.wordError {
+    border-bottom-color: var(--error-color);
 }
 
 .letter {
-    position: relative;
     color: var(--sub-color);
     transition: color 0.1s;
 }
@@ -119,15 +165,18 @@
     }
 }
 
-.letter.cursor::before {
-    content: "";
+/* Cursor is now handled by a separate element (.caret) */
+.caret {
     position: absolute;
-    left: -2px;
-    top: 5%;
-    height: 90%;
     width: 2px;
+    height: 1.5em;
+    /* approximate line height */
     background-color: var(--caret-color);
+    transition: left 0.1s ease, top 0.1s ease;
     animation: blink 1s infinite;
+    pointer-events: none;
+    z-index: 10;
+    border-radius: 2px;
 }
 
 .results {
@@ -136,23 +185,31 @@
     align-items: center;
     justify-content: center;
     animation: fadeIn 0.3s ease;
+    margin-top: 2rem;
 }
 
-.finalWpm {
-    font-size: 6rem;
+.resultGroup {
+    display: flex;
+    gap: 4rem;
+}
+
+.resultValue {
+    font-size: 4rem;
     color: var(--main-color);
     font-weight: bold;
+    line-height: 1;
 }
 
-.label {
+.resultLabel {
     font-size: 1rem;
     color: var(--sub-color);
-    margin-bottom: 2rem;
+    text-align: center;
+    margin-top: 0.5rem;
 }
 
 .restartBtn {
     background-color: var(--main-color);
-    color: white;
+    color: var(--bg-color);
     border: none;
     padding: 0.8rem 2rem;
     font-size: 1.2rem;

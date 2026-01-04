@@ -41,103 +41,158 @@
 .hudGroup {
     display: flex;
     gap: 1.5rem;
-    background: rgba(0, 0, 0, 0.4);
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    backdrop-filter: blur(4px);
+    background: linear-gradient(to bottom, #334155, #1e293b);
+    padding: 0.5rem 1.5rem;
+    border-radius: 12px;
+    border: 2px solid #475569;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    align-items: center;
+    font-family: 'Courier New', monospace;
+    /* Game-y font */
+    letter-spacing: 1px;
 }
 
-/* --- Player: The Sword Man --- */
+/* --- Player: The Sword Man (Enhanced) --- */
 .playerContainer {
     position: absolute;
     bottom: 40px;
-    /* On the ground */
     left: 50%;
     transform: translateX(-50%);
-    width: 80px;
-    height: 100px;
+    width: 60px;
+    height: 90px;
     z-index: 20;
     transition: transform 0.1s;
+}
+
+.playerCape {
+    position: absolute;
+    top: 20px;
+    left: 5px;
+    width: 50px;
+    height: 60px;
+    background: #ef4444;
+    /* Red Hero Cape */
+    border-radius: 5px;
+    transform-origin: top center;
+    animation: capeFlow 2s infinite ease-in-out;
+    z-index: 0;
+}
+
+@keyframes capeFlow {
+
+    0%,
+    100% {
+        transform: rotate(2deg) skewX(0deg);
+    }
+
+    50% {
+        transform: rotate(-2deg) skewX(2deg);
+    }
 }
 
 .playerBody {
     position: absolute;
     bottom: 0;
-    left: 20px;
+    left: 10px;
     width: 40px;
-    height: 60px;
+    height: 50px;
     background: #3b82f6;
-    /* Blue tunic */
-    border-radius: 8px 8px 0 0;
+    /* Blue Armor */
+    border-radius: 8px 8px 4px 4px;
+    border: 2px solid #1e3a8a;
+    z-index: 1;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Belt */
+.playerBody::after {
+    content: '';
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    height: 8px;
+    background: #78350f;
+    border-top: 2px solid #fbbf24;
+    /* Gold buckle area */
 }
 
 .playerHead {
     position: absolute;
-    top: 10px;
-    left: 20px;
+    top: 5px;
+    left: 10px;
     width: 40px;
     height: 40px;
     background: #fca5a5;
-    /* Skin tone */
     border-radius: 50%;
-    z-index: 21;
+    z-index: 2;
+    border: 2px solid #1e3a8a;
 }
 
-/* Headband */
+/* Headband/Scarf tails */
+.playerHead::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    right: -10px;
+    width: 20px;
+    height: 8px;
+    background: #ef4444;
+    transform: rotate(15deg);
+    z-index: -1;
+}
+
+/* Headband Band */
 .playerHead::after {
     content: '';
     position: absolute;
-    top: 5px;
+    top: 8px;
     left: 0;
     width: 100%;
-    height: 10px;
+    height: 8px;
     background: #ef4444;
-    /* Red headband */
 }
 
-/* Sword */
+/* Sword (Enhanced) */
 .swordWrapper {
     position: absolute;
-    top: 40px;
-    right: -10px;
-    width: 100px;
-    height: 100px;
-    transform-origin: 20px 50px;
-    /* Pivot around hand */
-    transition: transform 0.1s;
+    top: 35px;
+    right: -25px;
+    width: 90px;
+    height: 90px;
+    transform-origin: 10px 50px;
     pointer-events: none;
+    z-index: 5;
 }
 
 .sword {
     position: absolute;
-    top: 40px;
-    left: 0px;
+    top: 42px;
+    left: 0;
     width: 80px;
-    height: 12px;
-    background: #cbd5e1;
-    /* Silver blade */
-    border-radius: 2px 10px 10px 2px;
-    border: 1px solid #64748b;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    height: 14px;
+    background: linear-gradient(to bottom, #f8fafc, #cbd5e1);
+    border-radius: 2px 20px 20px 2px;
+    border: 1px solid #475569;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
     transform-origin: 0% 50%;
     transform: rotate(-45deg);
-    /* Resting position */
 }
 
 .swordHandle {
     position: absolute;
-    top: 36px;
-    left: -10px;
-    width: 20px;
-    height: 20px;
-    background: #78350f;
-    /* Brown handle */
-    border-radius: 50%;
+    top: 38px;
+    left: -12px;
+    width: 24px;
+    height: 24px;
+    background: #b45309;
+    border-radius: 4px;
+    border: 2px solid #78350f;
 }
 
-/* Attack Animation Class */
+/* Attack Animation */
 .attacking .swordWrapper {
-    animation: swing 0.15s ease-out;
+    animation: swing 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes swing {
@@ -146,7 +201,7 @@
     }
 
     50% {
-        transform: rotate(100deg);
+        transform: rotate(110deg);
     }
 
     100% {
@@ -154,107 +209,106 @@
     }
 }
 
-/* --- Enemies --- */
+/* --- Enemies (SVG Icons) --- */
 .enemy {
     position: absolute;
     transform: translateX(-50%);
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* transition: top 0.1s linear;  <-- REMOVED to fix jerky animation during JS updates */
     transition: transform 0.1s;
-    /* Only animate transform (shake/scale) */
     z-index: 10;
     will-change: top, left;
 }
 
-/* Enemy Sprites (CSS shapes) */
 .enemySprite {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
+    width: 60px;
+    height: 60px;
     margin-bottom: 5px;
-    position: relative;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    border: 2px solid rgba(0, 0, 0, 0.2);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    /* Drop shadow for pop */
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
 }
 
-/* Slime Type */
+/* 1. Slime */
 .enemy[data-type="slime"] .enemySprite {
-    background: #84cc16;
-    /* Green */
-    border-radius: 50% 50% 10% 10%;
-    height: 40px;
-    width: 45px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2384cc16' stroke='%23365314' stroke-width='1.5' stroke-linejoin='round'%3E%3Cpath d='M18 10c0-4.4-3.6-8-8-8s-8 3.6-8 8v4c0 2.2 1.8 4 4 4h8c2.2 0 4-1.8 4-4v-4z'/%3E%3Cpath d='M8 12h.01' stroke='%23365314' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M16 12h.01' stroke='%23365314' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
 }
 
-/* Bat Type */
-.enemy[data-type="bat"] .enemySprite {
-    background: #a855f7;
-    /* Purple */
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-}
-
-.enemy[data-type="bat"] .enemySprite::before,
-.enemy[data-type="bat"] .enemySprite::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    width: 20px;
-    height: 20px;
-    background: #a855f7;
-    border-radius: 50%;
-}
-
-.enemy[data-type="bat"] .enemySprite::before {
-    left: -10px;
-}
-
-.enemy[data-type="bat"] .enemySprite::after {
-    right: -10px;
-}
-
-/* Ghost Type */
+/* 2. Ghost */
 .enemy[data-type="ghost"] .enemySprite {
-    background: #e2e8f0;
-    /* White/Gray */
-    border-radius: 50% 50% 0 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e2e8f0' stroke='%23475569' stroke-width='1.5' stroke-linejoin='round'%3E%3Cpath d='M9 22l3-3 3 3V10a6 6 0 0 0-12 0v12' /%3E%3Cpath d='M9 10h.01' stroke='%23475569' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M15 10h.01' stroke='%23475569' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
     opacity: 0.9;
 }
 
-/* Eyes common to all */
-.enemySprite::after {
-    content: '••';
-    position: absolute;
-    top: 30%;
-    left: 50%;
-    transform: translateX(-50%);
-    color: black;
-    font-size: 20px;
-    letter-spacing: 4px;
+/* 3. Bat */
+.enemy[data-type="bat"] .enemySprite {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%237e22ce' stroke='%23581c87' stroke-width='1.5' stroke-linejoin='round'%3E%3Cpath d='M2 12s3-3 6-1c0 0 1-3 4-3s4 3 4 3c3-2 6 1 6 1s-2 4-2 7c0 2-2 3-4 3H8c-2 0-4-1-4-3c0-3-2-7-2-7z'/%3E%3Cpath d='M8 12h.01' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M16 12h.01' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-size: 110%;
+}
+
+/* 4. Spider */
+.enemy[data-type="spider"] .enemySprite {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231e293b' stroke='%2394a3b8' stroke-width='1.5' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='5' /%3E%3Cpath d='M12 7V4' /%3E%3Cpath d='M12 17v3' /%3E%3Cpath d='M17 12h3' /%3E%3Cpath d='M4 12h3' /%3E%3Cpath d='M16.5 7.5L19 5' /%3E%3Cpath d='M16.5 16.5L19 19' /%3E%3Cpath d='M7.5 7.5L5 5' /%3E%3Cpath d='M7.5 16.5L5 19' /%3E%3C/svg%3E");
+    background-size: 80%;
+}
+
+/* 5. Skeleton */
+.enemy[data-type="skeleton"] .enemySprite {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f1f5f9' stroke='%23475569' stroke-width='1.5' stroke-linejoin='round'%3E%3Cpath d='M7 3h10a4 4 0 0 1 4 4v5a1 1 0 0 1-1 1h-2a2 2 0 1 0-4 0h-4a2 2 0 1 0-4 0H4a1 1 0 0 1-1-1V7a4 4 0 0 1 4-4z' /%3E%3Ccircle cx='9' cy='10' r='1.5' fill='%231e293b'/%3E%3Ccircle cx='15' cy='10' r='1.5' fill='%231e293b'/%3E%3Cpath d='M8 18v3' /%3E%3Cpath d='M12 18v3' /%3E%3Cpath d='M16 18v3' /%3E%3C/svg%3E");
+}
+
+/* 6. Wolf */
+.enemy[data-type="wolf"] .enemySprite {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2357534e' stroke='%23292524' stroke-width='1.5' stroke-linejoin='round'%3E%3Cpath d='M3 9l9-6 9 6v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V9z' /%3E%3Cpath d='M7 9l5 4 5-4' /%3E%3Ccircle cx='9' cy='15' r='1.5' fill='white'/%3E%3Ccircle cx='15' cy='15' r='1.5' fill='white'/%3E%3C/svg%3E");
+}
+
+/* 7. Eye */
+.enemy[data-type="eye"] .enemySprite {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' stroke='%23ef4444' stroke-width='1.5' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10' /%3E%3Ccircle cx='12' cy='12' r='4' fill='%23ef4444' /%3E%3Ccircle cx='12' cy='12' r='1.5' fill='black' /%3E%3C/svg%3E");
+}
+
+/* Dying Animation */
+.dying {
+    animation: die 0.3s ease-out forwards !important;
+}
+
+@keyframes die {
+    0% {
+        transform: scale(1);
+        filter: brightness(1.5);
+    }
+
+    100% {
+        transform: scale(0);
+        opacity: 0;
+    }
 }
 
 /* Enemy Word Badge */
 .wordBadge {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.95);
     padding: 0.2rem 0.6rem;
-    border-radius: 4px;
-    font-weight: bold;
-    font-size: 1rem;
+    border-radius: 6px;
+    font-weight: 800;
+    font-size: 0.95rem;
     white-space: nowrap;
-    border: 2px solid transparent;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border: 1px solid #cbd5e1;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    margin-top: 4px;
+    /* Space from sprite */
+    z-index: 20;
+    font-family: 'Courier New', monospace;
 }
 
 .matched {
     color: #ef4444;
-    /* Red for damaged parts */
 }
 
 .unmatched {
-    color: #1e293b;
+    color: #0f172a;
 }
 
 /* Active Target Styling */

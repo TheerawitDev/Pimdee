@@ -15,14 +15,14 @@ export interface Word {
 }
 
 export const useTypingEngine = () => {
-    const [language, setLanguage] = useState<Language>('english');
+    const [language, setLanguage] = useState<Language>('thai');
     const [difficulty, setDifficulty] = useState<Difficulty>('elementary');
     const [words, setWords] = useState<Word[]>([]);
     const [gameState, setGameState] = useState<TypingState>('idle');
     const [cursorIndex, setCursorIndex] = useState({ wordIndex: 0, letterIndex: 0 });
 
     // Modes
-    const [mode, setMode] = useState<'standard' | 'time' | 'document'>('standard');
+    const [mode, setMode] = useState<'standard' | 'time' | 'document'>('time');
     const [timeLimit, setTimeLimit] = useState<30 | 60 | 120>(60);
     const [timeLeft, setTimeLeft] = useState(60);
 
@@ -31,6 +31,7 @@ export const useTypingEngine = () => {
     const [wpm, setWpm] = useState(0);
     const [accuracy, setAccuracy] = useState(100);
     const [correctKeyStrokes, setCorrectKeyStrokes] = useState(0);
+    const [totalKeyStrokes, setTotalKeyStrokes] = useState(0);
 
 
     const resetGame = useCallback(() => {
@@ -55,6 +56,7 @@ export const useTypingEngine = () => {
         setWpm(0);
         setAccuracy(100);
         setCorrectKeyStrokes(0);
+        setTotalKeyStrokes(0);
 
 
         // Reset Timer
@@ -83,8 +85,18 @@ export const useTypingEngine = () => {
 
             // Auto-generate more words if near end (only if NOT document mode, assuming random words)
             // For Time Mode or Standard (if we want infinite standard)
-            if (mode === 'time' && currentWordIndex > newWords.length - 20) {
-                const moreWordsStrings = getRandomWords(language, difficulty, 20);
+            // Auto-generate more words if near end (only if NOT document mode, assuming random words)
+            // For Time Mode or Standard (if we want infinite standard)
+            // AND NOW for Document mode (infinite loop until stop)
+            if ((mode === 'time' || mode === 'document') && currentWordIndex > newWords.length - 40) {
+                let moreWordsStrings: string[] = [];
+                if (mode === 'document') {
+                    const doc = getRandomDocument(language);
+                    moreWordsStrings = doc.split(' ');
+                } else {
+                    moreWordsStrings = getRandomWords(language, difficulty, 40);
+                }
+
                 const moreWords = moreWordsStrings.map(str => ({
                     letters: str.split('').map(char => ({ char, status: 'pending' } as Letter))
                 }));
@@ -112,6 +124,7 @@ export const useTypingEngine = () => {
                 } else if (mode === 'standard') {
                     setGameState('finish');
                 }
+                // For document mode, we don't finish automatically on space, just keep going (infinite) until user stops
                 return newWords;
             }
 
@@ -119,6 +132,16 @@ export const useTypingEngine = () => {
             if (key.length === 1) {
                 if (currentLetterIndex < currentWord.letters.length) {
                     const expectedChar = currentWord.letters[currentLetterIndex].char;
+
+                    setTotalKeyStrokes(prev => {
+                        const newTotal = prev + 1;
+                        // Calculate accuracy immediately or in effect? In effect is cleaner but here is instant.
+                        // We'll trust the effect or calc it here. Let's do it in effect for consistency or just render it?
+                        // Actually, calculating in render is safer if we trust the states.
+                        // But let's verify update:
+                        return newTotal;
+                    });
+
                     if (key === expectedChar) {
                         currentWord.letters[currentLetterIndex].status = 'correct';
                         setCorrectKeyStrokes(prev => prev + 1);
@@ -128,8 +151,7 @@ export const useTypingEngine = () => {
 
                     if (currentLetterIndex === currentWord.letters.length - 1 && currentWordIndex === newWords.length - 1) {
                         if (mode === 'standard') setGameState('finish');
-                        // For time mode, we just wait for more words to generate or if logic failed, we stop.
-                        // But the generation logic at top should prevent this.
+                        // For time/document mode, we wait for more words or manual stop.
                     } else {
                         setCursorIndex({ wordIndex: currentWordIndex, letterIndex: currentLetterIndex + 1 });
                     }
@@ -140,6 +162,15 @@ export const useTypingEngine = () => {
         });
 
     }, [gameState, cursorIndex, mode, language, difficulty]);
+
+    useEffect(() => {
+        if (totalKeyStrokes > 0) {
+            const acc = Math.round((correctKeyStrokes / totalKeyStrokes) * 100);
+            setAccuracy(acc);
+        } else {
+            setAccuracy(100);
+        }
+    }, [correctKeyStrokes, totalKeyStrokes]);
 
     // Timer & WPM
     useEffect(() => {
@@ -157,6 +188,7 @@ export const useTypingEngine = () => {
                     if (mode === 'time') {
                         const remaining = Math.max(0, timeLimit - Math.floor(timeElapsedSec));
                         setTimeLeft(remaining);
+                        // Ensure we hit exactly 0 and finish
                         if (remaining === 0) {
                             setGameState('finish');
                         }
@@ -183,6 +215,7 @@ export const useTypingEngine = () => {
         wpm,
         accuracy,
         handleInput,
-        resetGame
+        resetGame,
+        stopGame: () => setGameState('finish')
     };
 };
