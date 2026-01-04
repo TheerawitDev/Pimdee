@@ -63,8 +63,8 @@ export const useTypingEngine = () => {
 
     // Initial load
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         resetGame();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [resetGame]);
 
     const handleInput = useCallback((key: string) => {

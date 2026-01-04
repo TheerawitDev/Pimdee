@@ -26,7 +26,7 @@ export default function MonsterGame({ onExit }: { onExit: () => void }) {
     const activeEnemyId = useRef<number | null>(null); // The enemy currently being typed
 
     // Game Loop
-    const animate = useCallback((time: number) => {
+    const animate = useCallback(function tick(time: number) {
         if (gameOver) return;
 
         setEnemies(prevEnemies => {
@@ -61,7 +61,7 @@ export default function MonsterGame({ onExit }: { onExit: () => void }) {
             spawnRate.current = Math.max(800, 2000 - (score * 20));
         }
 
-        requestRef.current = requestAnimationFrame(animate);
+        requestRef.current = requestAnimationFrame(tick);
     }, [gameOver, score]);
 
     useEffect(() => {
@@ -87,7 +87,7 @@ export default function MonsterGame({ onExit }: { onExit: () => void }) {
 
             setEnemies(prev => {
                 let targetId = activeEnemyId.current;
-                let newEnemies = [...prev];
+                const newEnemies = [...prev];
 
                 // If no active target, find one
                 if (targetId === null) {

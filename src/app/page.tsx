@@ -1,4 +1,4 @@
-import styles from "./page.module.css";
+
 import TypingTest from "@/components/TypingTest";
 
 export default function Home() {
