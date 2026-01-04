@@ -1,108 +1,355 @@
 .gameContainer {
     position: relative;
     width: 100%;
-    height: 500px;
-    background: linear-gradient(to bottom, #f0f4f8, #d9e2ec);
+    height: 600px;
+    background: linear-gradient(to bottom, #1a1c2c, #2b2b45);
+    /* Dark night/forest feel */
     border-radius: 12px;
     overflow: hidden;
     font-family: var(--font-primary);
-    border: 2px solid var(--sub-color);
+    border: 4px solid #4a5d75;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    user-select: none;
+}
+
+/* Floor/Ground */
+.gameContainer::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    background: #121420;
+    z-index: 1;
 }
 
 .hud {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    right: 10px;
+    top: 20px;
+    left: 20px;
+    right: 20px;
     display: flex;
     justify-content: space-between;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: bold;
-    color: var(--main-color);
-    z-index: 10;
+    color: #e2e8f0;
+    z-index: 100;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 
-.player {
+.hudGroup {
+    display: flex;
+    gap: 1.5rem;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    backdrop-filter: blur(4px);
+}
+
+/* --- Player: The Sword Man --- */
+.playerContainer {
     position: absolute;
-    bottom: 20px;
+    bottom: 40px;
+    /* On the ground */
     left: 50%;
     transform: translateX(-50%);
-    width: 60px;
-    height: 60px;
-    background-color: var(--main-color);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 2rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 80px;
+    height: 100px;
+    z-index: 20;
+    transition: transform 0.1s;
 }
 
+.playerBody {
+    position: absolute;
+    bottom: 0;
+    left: 20px;
+    width: 40px;
+    height: 60px;
+    background: #3b82f6;
+    /* Blue tunic */
+    border-radius: 8px 8px 0 0;
+}
+
+.playerHead {
+    position: absolute;
+    top: 10px;
+    left: 20px;
+    width: 40px;
+    height: 40px;
+    background: #fca5a5;
+    /* Skin tone */
+    border-radius: 50%;
+    z-index: 21;
+}
+
+/* Headband */
+.playerHead::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background: #ef4444;
+    /* Red headband */
+}
+
+/* Sword */
+.swordWrapper {
+    position: absolute;
+    top: 40px;
+    right: -10px;
+    width: 100px;
+    height: 100px;
+    transform-origin: 20px 50px;
+    /* Pivot around hand */
+    transition: transform 0.1s;
+    pointer-events: none;
+}
+
+.sword {
+    position: absolute;
+    top: 40px;
+    left: 0px;
+    width: 80px;
+    height: 12px;
+    background: #cbd5e1;
+    /* Silver blade */
+    border-radius: 2px 10px 10px 2px;
+    border: 1px solid #64748b;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    transform-origin: 0% 50%;
+    transform: rotate(-45deg);
+    /* Resting position */
+}
+
+.swordHandle {
+    position: absolute;
+    top: 36px;
+    left: -10px;
+    width: 20px;
+    height: 20px;
+    background: #78350f;
+    /* Brown handle */
+    border-radius: 50%;
+}
+
+/* Attack Animation Class */
+.attacking .swordWrapper {
+    animation: swing 0.15s ease-out;
+}
+
+@keyframes swing {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    50% {
+        transform: rotate(100deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+/* --- Enemies --- */
 .enemy {
     position: absolute;
     transform: translateX(-50%);
-    background: white;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    border: 2px solid var(--error-color);
-    transition: top 0.1s linear;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* transition: top 0.1s linear;  <-- REMOVED to fix jerky animation during JS updates */
+    transition: transform 0.1s;
+    /* Only animate transform (shake/scale) */
+    z-index: 10;
+    will-change: top, left;
 }
 
-.word {
-    font-size: 1.2rem;
+/* Enemy Sprites (CSS shapes) */
+.enemySprite {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-bottom: 5px;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(0, 0, 0, 0.2);
+}
+
+/* Slime Type */
+.enemy[data-type="slime"] .enemySprite {
+    background: #84cc16;
+    /* Green */
+    border-radius: 50% 50% 10% 10%;
+    height: 40px;
+    width: 45px;
+}
+
+/* Bat Type */
+.enemy[data-type="bat"] .enemySprite {
+    background: #a855f7;
+    /* Purple */
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+}
+
+.enemy[data-type="bat"] .enemySprite::before,
+.enemy[data-type="bat"] .enemySprite::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 20px;
+    height: 20px;
+    background: #a855f7;
+    border-radius: 50%;
+}
+
+.enemy[data-type="bat"] .enemySprite::before {
+    left: -10px;
+}
+
+.enemy[data-type="bat"] .enemySprite::after {
+    right: -10px;
+}
+
+/* Ghost Type */
+.enemy[data-type="ghost"] .enemySprite {
+    background: #e2e8f0;
+    /* White/Gray */
+    border-radius: 50% 50% 0 0;
+    opacity: 0.9;
+}
+
+/* Eyes common to all */
+.enemySprite::after {
+    content: '••';
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: black;
+    font-size: 20px;
+    letter-spacing: 4px;
+}
+
+/* Enemy Word Badge */
+.wordBadge {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
     font-weight: bold;
-    color: #555;
+    font-size: 1rem;
+    white-space: nowrap;
+    border: 2px solid transparent;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .matched {
-    color: var(--main-color);
+    color: #ef4444;
+    /* Red for damaged parts */
 }
 
 .unmatched {
-    color: #333;
+    color: #1e293b;
 }
 
-.target {
-    border-color: var(--main-color);
-    background-color: #e6ffFA;
-    transform: translateX(-50%) scale(1.1);
-    z-index: 5;
+/* Active Target Styling */
+.target .wordBadge {
+    border-color: #ef4444;
+    transform: scale(1.1);
+    background: #fff;
+    box-shadow: 0 0 10px #ef4444;
 }
 
+/* Particles / Effects */
+.damageText {
+    position: absolute;
+    color: #ef4444;
+    font-weight: bold;
+    font-size: 1.5rem;
+    animation: floatUp 0.5s ease-out forwards;
+    pointer-events: none;
+    z-index: 50;
+    text-shadow: 0 0 5px white;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-50px) scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* Game Over Screen */
 .gameOver {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(0, 0, 0, 0.85);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    z-index: 20;
+    z-index: 200;
+    color: white;
+    backdrop-filter: blur(5px);
 }
 
 .title {
-    font-size: 3rem;
-    color: var(--error-color);
+    font-size: 3.5rem;
+    color: #ef4444;
     margin-bottom: 1rem;
+    font-weight: 900;
+    text-shadow: 0 0 20px #ef4444;
 }
 
 .score {
-    font-size: 2rem;
-    color: var(--main-color);
+    font-size: 2.5rem;
     margin-bottom: 2rem;
+    text-shadow: 0 0 10px white;
 }
 
 .restartBtn {
-    padding: 1rem 2rem;
+    padding: 1rem 3rem;
     font-size: 1.5rem;
-    background: var(--main-color);
+    background: linear-gradient(to right, #ef4444, #dc2626);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 50px;
     cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-weight: bold;
+    box-shadow: 0 5px 15px rgba(220, 38, 38, 0.4);
+}
+
+.restartBtn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(220, 38, 38, 0.6);
+}
+
+.exitBtn {
+    margin-top: 1rem;
+    background: transparent;
+    color: #94a3b8;
+    border: 2px solid #94a3b8;
+    padding: 0.5rem 2rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.exitBtn:hover {
+    color: white;
+    border-color: white;
 }

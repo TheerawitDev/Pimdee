@@ -58,7 +58,7 @@ export default function TypingTest() {
     }, [handleInput, resetGame, gameState, isGameMode]);
 
     if (isGameMode) {
-        return <MonsterGame onExit={() => setIsGameMode(false)} />;
+        return <MonsterGame onExit={() => setIsGameMode(false)} language={language} />;
     }
 
     return (
