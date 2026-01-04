@@ -23,6 +23,10 @@ export default function Home() {
         <div>
           key bindings: tab (restart)
         </div>
+        <div style={{ textAlign: "center", opacity: 0.5 }}>
+          <p>Credit: Theerawit Waithayawan</p>
+          <p>Contact: pm.theerawit@gmail.com</p>
+        </div>
         <div>
           v0.1.0
         </div>

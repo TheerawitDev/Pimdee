@@ -104,6 +104,7 @@ export default function VirtualKeyboard({ language, activeChar, showHands = true
                                         </>
                                     )}
                                 </div>
+                                {(key.code === 'KeyF' || key.code === 'KeyJ') && <div className={styles.homingBar} />}
                             </div>
                         );
                     })}
