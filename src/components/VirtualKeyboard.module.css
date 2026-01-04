@@ -1,0 +1,114 @@
+.keyboardWrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 900px;
+    margin: 2rem auto 0;
+    padding: 1rem;
+    background: rgba(var(--background-rgb), 0.5);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    user-select: none;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(var(--primary-rgb), 0.1);
+}
+
+.row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 6px;
+    gap: 6px;
+}
+
+.key {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    height: 48px;
+    min-width: 40px;
+    background: var(--bg-secondary);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    transition: all 0.1s ease;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+[data-theme='dark'] .key {
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.keyLabel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1;
+}
+
+.primaryChar {
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.shiftChar {
+    font-size: 0.75rem;
+    opacity: 0.7;
+    position: absolute;
+    top: 4px;
+    left: 4px;
+}
+
+/* Specific key customizations */
+.modifier {
+    background: rgba(var(--primary-rgb), 0.05);
+    font-size: 0.8rem;
+    text-transform: lowercase;
+}
+
+.space {
+    /* Space bar specific styles */
+    min-width: 200px;
+}
+
+/* Active State - When key needs to be pressed */
+.active {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(1px);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1) !important;
+    border-color: transparent;
+    z-index: 10;
+}
+
+.active .shiftChar {
+    opacity: 0.9;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Hands Area (Optional visual) */
+.handsContainer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+    padding: 0 2rem;
+    opacity: 0.5;
+}
+
+.hand {
+    /* Placeholder for SVG hands if we implement them */
+    width: 100px;
+    height: 80px;
+    background: transparent;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 800px) {
+    .keyboardWrapper {
+        display: none;
+        /* Hide on small screens as it's too cramped */
+    }
+}

@@ -5,6 +5,7 @@ import { useTypingEngine } from "@/hooks/useTypingEngine";
 import { Difficulty } from "@/lib/dictionaries";
 import styles from "./TypingTest.module.css";
 import MonsterGame from "./MonsterGame";
+import VirtualKeyboard from "./VirtualKeyboard";
 
 export default function TypingTest() {
     const {
@@ -28,6 +29,7 @@ export default function TypingTest() {
     } = useTypingEngine();
 
     const [isGameMode, setIsGameMode] = useState(false);
+    const [showKeyboard, setShowKeyboard] = useState(false);
     const [theme, setTheme] = useState<'light' | 'dark'>('light');
     const containerRef = useRef<HTMLDivElement>(null);
     const caretRef = useRef<HTMLDivElement>(null);
@@ -224,6 +226,29 @@ export default function TypingTest() {
                         ))}
                     </div>
 
+                    {/* Keyboard Toggle */}
+                    <button
+                        className={`${styles.themeToggle} ${showKeyboard ? styles.active : ''}`}
+                        onClick={() => setShowKeyboard(!showKeyboard)}
+                        title="Toggle Virtual Keyboard"
+                        style={{ marginRight: '0.5rem' }}
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
+                            <line x1="6" y1="8" x2="6" y2="8"></line>
+                            <line x1="10" y1="8" x2="10" y2="8"></line>
+                            <line x1="14" y1="8" x2="14" y2="8"></line>
+                            <line x1="18" y1="8" x2="18" y2="8"></line>
+                            <line x1="6" y1="12" x2="6" y2="12"></line>
+                            <line x1="10" y1="12" x2="10" y2="12"></line>
+                            <line x1="14" y1="12" x2="14" y2="12"></line>
+                            <line x1="18" y1="12" x2="18" y2="12"></line>
+                            <line x1="6" y1="16" x2="6" y2="16"></line>
+                            <line x1="10" y1="16" x2="14" y2="16"></line>
+                            <line x1="18" y1="16" x2="18" y2="16"></line>
+                        </svg>
+                    </button>
+
                     {/* Theme Toggle */}
                     <button className={styles.themeToggle} onClick={toggleTheme} title="Toggle Theme">
                         {theme === 'light' ? (
@@ -318,6 +343,15 @@ export default function TypingTest() {
             <div className={styles.instruction}>
                 {gameState === 'idle' && "Press any key to start"}
             </div>
+
+            {showKeyboard && (
+                <VirtualKeyboard
+                    language={language}
+                    activeChar={
+                        words[cursorIndex.wordIndex]?.letters[cursorIndex.letterIndex]?.char || ' '
+                    }
+                />
+            )}
         </div>
     );
 }
