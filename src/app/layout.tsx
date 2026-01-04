@@ -21,7 +21,14 @@ const robotoMono = Roboto_Mono({
 
 export const metadata: Metadata = {
   title: "Pimdee - Thai Typing Practice",
-  description: "Minimalist Thai and English typing practice application.",
+  description: "Minimalist Thai and English typing practice application. Improve your wpm and accuracy.",
+  keywords: ["typing practice", "thai typing", "pimdee", "typing test", "wpm", "touch typing"],
+  authors: [{ name: "Pimdee Team" }],
+  openGraph: {
+    title: "Pimdee - Thai Typing Practice",
+    description: "Minimalist Thai and English typing practice application.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
