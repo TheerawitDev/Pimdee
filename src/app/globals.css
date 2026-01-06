@@ -15,8 +15,8 @@
   --error-extra-color: #b91c1c;
 
   /* Font Families */
-  --font-primary: var(--font-noto-sans), var(--font-thai), sans-serif;
-  --font-mono: var(--font-mono), monospace;
+  --font-primary: var(--font-thai), var(--font-noto-sans), sans-serif;
+  --font-mono: var(--font-mono), var(--font-thai), monospace;
 
   /* Spacing & Layout */
   --content-width: 1400px;
