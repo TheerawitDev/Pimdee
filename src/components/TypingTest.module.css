@@ -368,9 +368,15 @@
 
 .hiddenInput {
     position: absolute;
+    top: -9999px;
+    left: -9999px;
     opacity: 0;
     z-index: -1;
     height: 0;
     width: 0;
     pointer-events: none;
+    background: transparent;
+    color: transparent;
+    border: none;
+    outline: none;
 }
