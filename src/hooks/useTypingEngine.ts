@@ -23,6 +23,9 @@ export const useTypingEngine = () => {
 
     // Modes
     const [mode, setMode] = useState<'standard' | 'time' | 'document'>('time');
+
+
+
     const [timeLimit, setTimeLimit] = useState<30 | 60 | 120>(60);
     const [timeLeft, setTimeLeft] = useState(60);
 
