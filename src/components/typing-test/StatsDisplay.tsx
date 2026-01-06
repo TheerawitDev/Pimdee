@@ -22,22 +22,20 @@ export default function StatsDisplay({
 }: StatsDisplayProps) {
     return (
         <div className={styles.stats}>
-            {mode === 'time' && gameState !== 'finish' && <span className={styles.timer}>{timeLeft}s</span>}
+            {mode === 'time' && gameState !== 'finish' && <span className={styles.timer}>{timeLeft}</span>}
             {mode === 'time' && gameState === 'finish' && (
                 <span>{wpm} <span style={{ fontSize: '0.8em', opacity: 0.7 }}>wpm</span></span>
             )}
             {gameState === 'start' && (
                 <button
-                    className={styles.modeBtn}
-                    style={{ color: 'var(--error-color)', border: '1px solid var(--error-color)' }}
+                    className={styles.stopBtn}
                     onClick={stopGame}
                 >
                     STOP
                 </button>
             )}
             <button
-                className={`${styles.modeBtn} ${isGameMode ? styles.active : ''}`}
-                style={{ color: 'var(--error-color)', fontWeight: 'bold' }}
+                className={styles.gameModeBtn}
                 onClick={() => setIsGameMode(true)}
             >
                 GAME MODE

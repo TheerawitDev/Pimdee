@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { getRandomWords, getRandomDocument, Language, Difficulty } from '@/lib/dictionaries';
 
 export type TypingState = 'idle' | 'start' | 'finish';
@@ -178,6 +178,13 @@ export const useTypingEngine = () => {
     }, [correctKeyStrokes, totalKeyStrokes]);
     */
 
+    // Ref to track correctKeyStrokes without resetting the interval
+    const correctKeyStrokesRef = useRef(correctKeyStrokes);
+
+    useEffect(() => {
+        correctKeyStrokesRef.current = correctKeyStrokes;
+    }, [correctKeyStrokes]);
+
     // Timer & WPM
     useEffect(() => {
         let interval: NodeJS.Timeout;
@@ -187,7 +194,7 @@ export const useTypingEngine = () => {
                 if (startTime) {
                     const timeElapsedSec = (now - startTime) / 1000;
                     const timeElapsedMin = timeElapsedSec / 60;
-                    const currentWpm = Math.round((correctKeyStrokes / 5) / (timeElapsedMin || 0.001)); // Avoid /0
+                    const currentWpm = Math.round((correctKeyStrokesRef.current / 5) / (timeElapsedMin || 0.001)); // Avoid /0
                     setWpm(currentWpm);
 
                     // Time Mode Countdown
@@ -203,7 +210,7 @@ export const useTypingEngine = () => {
             }, 1000);
         }
         return () => clearInterval(interval);
-    }, [gameState, startTime, correctKeyStrokes, mode, timeLimit]);
+    }, [gameState, startTime, mode, timeLimit]); // correctKeyStrokes REMOVED from dependency array
 
     return {
         language,
