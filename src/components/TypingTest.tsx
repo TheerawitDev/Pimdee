@@ -64,6 +64,11 @@ export default function TypingTest() {
         if (isGameMode) return;
 
         const handleKeyDown = (e: KeyboardEvent) => {
+            // Ignore if event comes from an input element (avoids double handling with hidden input onChange)
+            if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+                return;
+            }
+
             if (e.ctrlKey || e.altKey || e.metaKey) return;
             if (e.key === " " && gameState !== 'idle') {
                 e.preventDefault();
@@ -145,13 +150,19 @@ export default function TypingTest() {
 
     useEffect(() => {
         const ua = navigator.userAgent.toLowerCase();
-        // Strict Safari check: contains 'safari' but NOT 'chrome', 'android', or 'crios' (Chrome on iOS)
-        const isSafariBrowser = ua.includes('safari') &&
+
+        // Check if it's an iOS device (iPhone, iPad, iPod)
+        // Note: New iPads might report MacIntel but have touch points, so we check that too or rely on standard regex for now.
+        const isIOS = /iphone|ipad|ipod/.test(ua);
+
+        // Keep Desktop Safari check (excludes Chrome/Edge/Android)
+        const isDesktopSafari = ua.includes('safari') &&
             !ua.includes('chrome') &&
             !ua.includes('android') &&
-            !ua.includes('crios') &&
-            !ua.includes('edg'); // Exclude Edge just in case
-        setIsSafari(isSafariBrowser);
+            !ua.includes('edg');
+
+        // Apply fix for ANY iOS browser (since they all use WebKit) OR Desktop Safari
+        setIsSafari(isIOS || isDesktopSafari);
     }, []);
 
     if (isGameMode) {
@@ -265,6 +276,7 @@ export default function TypingTest() {
                 onKeyDown={(e) => {
                     // Capture Backspace specifically for mobile if keyboard supports it
                     // On Android/iOS, Backspace usually triggers a KeyDown event even on empty input
+                    e.stopPropagation(); // Stop bubbling to window
                     if (e.key === 'Backspace') {
                         handleInput('Backspace');
                     }
