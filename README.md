@@ -2,7 +2,7 @@
 
 **Pimdee** is a modern, minimalist typing practice application designed to help users improve their typing speed and accuracy in both Thai and English.
 
-[![Pimdee Preview](https://pimdee.games/)
+https://pimdee.games/
 
 ## Features
 
