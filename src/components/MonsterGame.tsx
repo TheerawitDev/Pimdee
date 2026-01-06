@@ -161,93 +161,107 @@ export default function MonsterGame({ onExit, language, difficulty }: { onExit: 
     }, [enemies]);
 
     // --- Input Handling ---
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (gameOver) return;
-            const char = e.key;
-            if (char.length !== 1) return;
+    // --- Input Handling ---
+    const inputRef = useRef<HTMLInputElement>(null);
 
-            const currentEnemies = enemiesRef.current;
-            let targetId = activeEnemyId.current;
+    const processInput = useCallback((char: string) => {
+        if (gameOver) return;
 
-            // 1. Find Target if needed
-            if (targetId === null) {
-                const candidates = currentEnemies
-                    .filter(e => e.word.startsWith(char))
-                    .sort((a, b) => b.y - a.y);
+        // Normalize input to lower case if your game requires it, 
+        // but current logic seems to check exact match or maybe case insensitive?
+        // The dictionary usually returns lowercase? Let's check. 
+        // Existing logic used e.key.
 
-                if (candidates.length > 0) {
-                    targetId = candidates[0].id;
-                    activeEnemyId.current = targetId;
-                } else {
-                    setCombo(0);
-                    return; // Missed
-                }
+        const currentEnemies = enemiesRef.current;
+        let targetId = activeEnemyId.current;
+
+        // 1. Find Target if needed
+        if (targetId === null) {
+            const candidates = currentEnemies
+                .filter(e => e.word.startsWith(char))
+                .sort((a, b) => b.y - a.y);
+
+            if (candidates.length > 0) {
+                targetId = candidates[0].id;
+                activeEnemyId.current = targetId;
+            } else {
+                setCombo(0);
+                return; // Missed
             }
+        }
 
-            // 2. Process Attack
-            if (targetId !== null) {
-                const idx = currentEnemies.findIndex(e => e.id === targetId);
+        // 2. Process Attack
+        if (targetId !== null) {
+            const idx = currentEnemies.findIndex(e => e.id === targetId);
 
-                if (idx !== -1) {
-                    const enemy = currentEnemies[idx];
+            if (idx !== -1) {
+                const enemy = currentEnemies[idx];
 
-                    if (enemy.word[enemy.matchedIndex] === char) {
-                        // HIT
-                        const nextIndex = enemy.matchedIndex + 1;
-                        const isDead = nextIndex === enemy.word.length;
+                if (enemy.word[enemy.matchedIndex] === char) {
+                    // HIT
+                    const nextIndex = enemy.matchedIndex + 1;
+                    const isDead = nextIndex === enemy.word.length;
 
-                        // Visuals
-                        setIsAttacking(true);
-                        setTimeout(() => setIsAttacking(false), 150);
+                    // Visuals
+                    setIsAttacking(true);
+                    setTimeout(() => setIsAttacking(false), 150);
 
-                        if (isDead) {
-                            // KILL LOGIC
-                            createParticle(enemy.x, enemy.y, `+${10 + combo}`);
-                            setScore(s => s + 10 + combo);
-                            setCombo(c => c + 1);
-                            activeEnemyId.current = null;
+                    if (isDead) {
+                        // KILL LOGIC
+                        createParticle(enemy.x, enemy.y, `+${10 + combo}`);
+                        setScore(s => s + 10 + combo);
+                        setCombo(c => c + 1);
+                        activeEnemyId.current = null;
 
-                            // 1. Add to dying
-                            const dyingEnemy = {
-                                ...enemy,
-                                matchedIndex: nextIndex,
-                                dying: true,
-                                deathTime: performance.now()
-                            };
-                            setDyingEnemies(prev => [...prev, dyingEnemy]);
+                        // 1. Add to dying
+                        const dyingEnemy = {
+                            ...enemy,
+                            matchedIndex: nextIndex,
+                            dying: true,
+                            deathTime: performance.now()
+                        };
+                        setDyingEnemies(prev => [...prev, dyingEnemy]);
 
-                            // 2. Remove from living (Use functional update to be safe against race with animate)
-                            setEnemies(prev => prev.filter(e => e.id !== targetId));
+                        // 2. Remove from living (Use functional update to be safe against race with animate)
+                        setEnemies(prev => prev.filter(e => e.id !== targetId));
 
-                        } else {
-                            // HIT LOGIC (Update matched index)
-                            // Use functional update to ensure we modify the LATEST position from animate loop
-                            setEnemies(prev => prev.map(e => {
-                                if (e.id === targetId) {
-                                    return {
-                                        ...e,
-                                        matchedIndex: nextIndex,
-                                        shake: true
-                                    };
-                                }
-                                return e;
-                            }));
-                        }
                     } else {
-                        // Wrong key for current target
-                        // Optional: Penalty or shake?
+                        // HIT LOGIC (Update matched index)
+                        // Use functional update to ensure we modify the LATEST position from animate loop
+                        setEnemies(prev => prev.map(e => {
+                            if (e.id === targetId) {
+                                return {
+                                    ...e,
+                                    matchedIndex: nextIndex,
+                                    shake: true
+                                };
+                            }
+                            return e;
+                        }));
                     }
                 } else {
-                    // Target gone (maybe hit bottom)
-                    activeEnemyId.current = null;
+                    // Wrong key for current target
                 }
+            } else {
+                // Target gone (maybe hit bottom)
+                activeEnemyId.current = null;
+            }
+        }
+    }, [gameOver, combo]);
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            // Ignore if coming from input (to avoid double process)
+            if (e.target instanceof HTMLInputElement) return;
+
+            if (e.key.length === 1) {
+                processInput(e.key);
             }
         };
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [gameOver, combo]); // enemiesRef handles the enemies dependency
+    }, [processInput]);
 
     const handleRestart = () => {
         setEnemies([]);
@@ -261,7 +275,33 @@ export default function MonsterGame({ onExit, language, difficulty }: { onExit: 
     };
 
     return (
-        <div className={styles.gameContainer} ref={containerRef}>
+        <div className={styles.gameContainer} ref={containerRef} onClick={() => inputRef.current?.focus()}>
+            {/* Hidden Input for Mobile */}
+            <input
+                ref={inputRef}
+                type="text"
+                style={{
+                    position: 'absolute',
+                    top: '-9999px',
+                    left: '-9999px',
+                    opacity: 0,
+                    height: 0,
+                    width: 0,
+                    pointerEvents: 'none'
+                }}
+                autoComplete="off"
+                autoCapitalize="off"
+                autoCorrect="off"
+                spellCheck="false"
+                value=""
+                onChange={(e) => {
+                    const val = e.target.value;
+                    if (val) {
+                        const char = val.slice(-1);
+                        processInput(char);
+                    }
+                }}
+            />
             {/* Background elements could go here */}
 
             <div className={styles.hud}>

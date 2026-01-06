@@ -302,6 +302,16 @@
     margin-left: -0.55em;
     /* Pull the mark back to overlap the previous character */
     position: relative;
+    z-index: 1;
+    /* Ensure on top */
+}
+
+/* Mobile Specific Vowel Adjustment */
+@media (max-width: 1024px) {
+    .safari .combining {
+        margin-left: -0.45em;
+        /* Slightly less pull back for mobile font size */
+    }
 }
 
 /* Mobile Responsiveness */
@@ -349,15 +359,15 @@
     }
 
     .wordsContainer {
-        font-size: 1.8rem;
-        /* Larger font for mobile */
-        /* Fixed height for 3 lines: approx 1.8 * 3 + padding */
-        height: 6em;
+        font-size: 1.5rem;
+        /* Reduced from 1.8rem */
+        /* Adjusted height for 3 lines at 2.0 line-height (3 * 2.0 = 6.0 + padding) */
+        height: 6.5em;
+        /* Safe buffer */
         overflow: hidden;
         min-height: 0;
-        /* Override */
-        line-height: 1.8;
-        /* More spacing for Thai vowels */
+        line-height: 2.0;
+        /* Increased for Thai vowels */
         padding: 0.2em 0.5rem;
     }
 
