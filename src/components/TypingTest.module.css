@@ -156,8 +156,8 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.6em;
-    font-size: 1.7rem;
-    /* Adjusted size */
+    font-size: 1.9rem;
+    /* Larger desktop font */
     line-height: 1.6;
     user-select: none;
     outline: none;

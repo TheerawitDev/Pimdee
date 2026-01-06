@@ -20,14 +20,14 @@ export default function Home() {
       </main>
 
       <footer className={`container ${styles.footer}`}>
-        <div>
+        <div style={{ flex: 1 }}>
           key bindings: tab (restart)
         </div>
-        <div style={{ textAlign: "center", opacity: 0.5 }}>
+        <div style={{ textAlign: "center", opacity: 0.5, flex: 2 }}>
           <p>Credit: Theerawit Waithayawan</p>
           <p>Contact: pm.theerawit@gmail.com</p>
         </div>
-        <div>
+        <div style={{ flex: 1, textAlign: "right" }}>
           v0.1.0
         </div>
       </footer>
