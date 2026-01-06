@@ -38,6 +38,7 @@ export default function TypingTest() {
     const containerRef = useRef<HTMLDivElement>(null);
     const caretRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
+    const isComposingRef = useRef(false);
 
     // Initial Theme Load
     useEffect(() => {
@@ -258,19 +259,34 @@ export default function TypingTest() {
                 autoCorrect="off"
                 spellCheck="false"
                 value=""
+                onCompositionStart={() => {
+                    // Thai and other complex scripts use composition events
+                    isComposingRef.current = true;
+                }}
+                onCompositionEnd={(e) => {
+                    // When composition ends, process the complete character
+                    isComposingRef.current = false;
+                    const data = e.data;
+                    if (data) {
+                        // Process each character in the composed data
+                        for (let i = 0; i < data.length; i++) {
+                            handleInput(data[i]);
+                        }
+                    }
+                }}
                 onChange={(e) => {
-                    // Mobile typing often inserts string or last char. 
-                    // We just want to capture the input event.
-                    // But since we control the value as empty, we look at nativeEvent data if possible?
-                    // Actually, simpler to just get the last char of e.target.value if length > 0
-                    // But we reset to "" immediately.
+                    // Skip processing during composition for Thai text
+                    if (isComposingRef.current) {
+                        return;
+                    }
+                    
+                    // For non-composition input (regular typing)
                     const val = e.target.value;
                     if (val) {
-                        const char = val.slice(-1);
-                        // Just send the char. 
-                        // Note: backspace might not trigger onChange if value is empty!
-                        // We need onKeyDown for backspace.
-                        handleInput(char);
+                        // Process each character that was input
+                        for (let i = 0; i < val.length; i++) {
+                            handleInput(val[i]);
+                        }
                     }
                 }}
                 onKeyDown={(e) => {
