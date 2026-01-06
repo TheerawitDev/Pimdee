@@ -351,9 +351,11 @@
     .wordsContainer {
         font-size: 1.8rem;
         /* Larger font for mobile */
-        height: auto;
-        /* Allow flexible height, or stick to em-based calculation */
-        min-height: 4.5em;
+        /* Fixed height for 3 lines: approx 1.8 * 3 + padding */
+        height: 6em;
+        overflow: hidden;
+        min-height: 0;
+        /* Override */
         line-height: 1.8;
         /* More spacing for Thai vowels */
         padding: 0.2em 0.5rem;
