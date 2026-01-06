@@ -209,18 +209,46 @@ export default function TypingTest() {
                 {words.map((word, wIdx) => {
                     const hasError = word.letters.some(l => l.status === 'incorrect');
 
+                    // Group letters for optimal rendering (fixes Thai dotted circles)
+                    const chunks: { text: string; status: string; isCombiningOnly: boolean; key: number }[] = [];
+                    let currentChunk: { text: string; status: string; isCombiningOnly: boolean; key: number } | null = null;
+
+                    word.letters.forEach((letter, lIdx) => {
+                        const isComb = isThaiCombiningChar(letter.char);
+
+                        // Try to append to previous chunk if:
+                        // 1. Current is combining
+                        // 2. Previous chunk exists
+                        // 3. Statuses match
+                        if (currentChunk && isComb && currentChunk.status === letter.status) {
+                            currentChunk.text += letter.char;
+                            currentChunk.isCombiningOnly = false; // It's now a cluster
+                        } else {
+                            // Push previous
+                            if (currentChunk) chunks.push(currentChunk);
+                            // Start new
+                            currentChunk = {
+                                text: letter.char,
+                                status: letter.status,
+                                isCombiningOnly: isComb,
+                                key: lIdx
+                            };
+                        }
+                    });
+                    if (currentChunk) chunks.push(currentChunk);
+
                     return (
                         <div key={wIdx} id={`word-${wIdx}`} className={`${styles.word} ${hasError ? styles.wordError : ''}`}>
-                            {word.letters.map((letter, lIdx) => {
+                            {chunks.map((chunk) => {
                                 let className = styles.letter;
-                                if (letter.status === 'correct') className += ` ${styles.correct}`;
-                                if (letter.status === 'incorrect') className += ` ${styles.incorrect}`;
-                                const isCombining = isThaiCombiningChar(letter.char);
-                                if (isCombining) className += ` ${styles.combining}`;
+                                if (chunk.status === 'correct') className += ` ${styles.correct}`;
+                                if (chunk.status === 'incorrect') className += ` ${styles.incorrect}`;
+                                // Only apply .combining (negative margin hack) if it's an ISOLATED combining char
+                                if (chunk.isCombiningOnly) className += ` ${styles.combining}`;
 
                                 return (
-                                    <span key={lIdx} className={className}>
-                                        {letter.char}
+                                    <span key={chunk.key} className={className}>
+                                        {chunk.text}
                                     </span>
                                 );
                             })}
