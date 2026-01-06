@@ -106,17 +106,17 @@
     gap: 0.6em;
     font-size: 1.7rem;
     /* Adjusted size */
-    line-height: 1.5;
+    line-height: 1.6;
     user-select: none;
     outline: none;
-    height: 4.5em;
-    /* 3 lines roughly */
+    height: 5.2em;
+    /* 3 lines roughly with padding */
     overflow: hidden;
     position: relative;
     align-content: flex-start;
-    padding: 0.1em 5px;
-    font-family: var(--font-mono);
-    /* Ensure mono for alignment if desired, but user likes sans usually. Keeping inherited. */
+    padding: 0.2em 5px;
+    font-family: var(--font-primary);
+    /* Use primary font (Sans) which supports Thai properly. */
 }
 
 .wordsContainer.documentMode {
