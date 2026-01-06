@@ -37,6 +37,7 @@ export default function TypingTest() {
     const [theme, setTheme] = useState<'light' | 'dark'>('light');
     const containerRef = useRef<HTMLDivElement>(null);
     const caretRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
 
     // Initial Theme Load
     useEffect(() => {
@@ -143,7 +144,14 @@ export default function TypingTest() {
     const [isSafari, setIsSafari] = useState(false);
 
     useEffect(() => {
-        setIsSafari(/^((?!chrome|android).)*safari/i.test(navigator.userAgent));
+        const ua = navigator.userAgent.toLowerCase();
+        // Strict Safari check: contains 'safari' but NOT 'chrome', 'android', or 'crios' (Chrome on iOS)
+        const isSafariBrowser = ua.includes('safari') &&
+            !ua.includes('chrome') &&
+            !ua.includes('android') &&
+            !ua.includes('crios') &&
+            !ua.includes('edg'); // Exclude Edge just in case
+        setIsSafari(isSafariBrowser);
     }, []);
 
     if (isGameMode) {
@@ -184,6 +192,7 @@ export default function TypingTest() {
 
             <div
                 ref={containerRef}
+                onClick={() => inputRef.current?.focus()}
                 className={`${styles.wordsContainer} ${gameState === 'finish' ? styles.hidden : ''} ${mode === 'document' ? styles.documentMode : ''}`}
             >
                 {words.map((word, wIdx) => {
@@ -227,6 +236,41 @@ export default function TypingTest() {
                     showHints={showHints}
                 />
             )}
+
+            {/* Hidden Input for Mobile Typing */}
+            <input
+                ref={inputRef}
+                type="text"
+                className={styles.hiddenInput}
+                autoComplete="off"
+                autoCapitalize="off"
+                autoCorrect="off"
+                spellCheck="false"
+                value=""
+                onChange={(e) => {
+                    // Mobile typing often inserts string or last char. 
+                    // We just want to capture the input event.
+                    // But since we control the value as empty, we look at nativeEvent data if possible?
+                    // Actually, simpler to just get the last char of e.target.value if length > 0
+                    // But we reset to "" immediately.
+                    const val = e.target.value;
+                    if (val) {
+                        const char = val.slice(-1);
+                        // Just send the char. 
+                        // Note: backspace might not trigger onChange if value is empty!
+                        // We need onKeyDown for backspace.
+                        handleInput(char);
+                    }
+                }}
+                onKeyDown={(e) => {
+                    // Capture Backspace specifically for mobile if keyboard supports it
+                    // On Android/iOS, Backspace usually triggers a KeyDown event even on empty input
+                    if (e.key === 'Backspace') {
+                        handleInput('Backspace');
+                    }
+                }}
+            />
         </div>
     );
 }
+

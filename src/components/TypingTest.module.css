@@ -305,7 +305,20 @@
 }
 
 /* Mobile Responsiveness */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
+
+    /* Hide all groups except the first one (Language) */
+    .configBar .group:not(:first-child) {
+        display: none;
+    }
+
+    /* Hide theme/keyboard toggles (buttons that are direct children of configBar) */
+    .configBar>button {
+        display: none;
+    }
+
+    /* Also ensure first group (Language) is visible but others are gone */
+
     .wrapper {
         gap: 1rem;
     }
@@ -336,15 +349,26 @@
     }
 
     .wordsContainer {
-        font-size: 1.4rem;
-        /* Smaller font for mobile */
+        font-size: 1.8rem;
+        /* Larger font for mobile */
         height: auto;
         /* Allow flexible height, or stick to em-based calculation */
         min-height: 4.5em;
+        line-height: 1.8;
+        /* More spacing for Thai vowels */
         padding: 0.2em 0.5rem;
     }
 
     .caret {
         height: 1.4em;
     }
+}
+
+.hiddenInput {
+    position: absolute;
+    opacity: 0;
+    z-index: -1;
+    height: 0;
+    width: 0;
+    pointer-events: none;
 }
