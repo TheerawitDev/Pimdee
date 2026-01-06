@@ -260,7 +260,8 @@ export default function TypingTest() {
                 spellCheck="false"
                 value=""
                 onCompositionStart={() => {
-                    // Thai and other complex scripts use composition events
+                    // Composition events handle input methods for languages with combining characters
+                    // (Thai, Vietnamese, Chinese, Japanese, Korean, etc.)
                     isComposingRef.current = true;
                 }}
                 onCompositionEnd={(e) => {
@@ -275,7 +276,7 @@ export default function TypingTest() {
                     }
                 }}
                 onChange={(e) => {
-                    // Skip processing during composition for Thai text
+                    // Skip processing during composition for languages with combining characters
                     if (isComposingRef.current) {
                         return;
                     }
@@ -284,6 +285,7 @@ export default function TypingTest() {
                     const val = e.target.value;
                     if (val) {
                         // Process each character that was input
+                        // Note: In a typing test, we expect one character at a time
                         for (let i = 0; i < val.length; i++) {
                             handleInput(val[i]);
                         }
