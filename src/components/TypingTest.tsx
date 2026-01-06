@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTypingEngine } from "@/hooks/useTypingEngine";
+import { isThaiCombiningChar } from "@/lib/thaiUtils";
 import styles from "./TypingTest.module.css";
 import MonsterGame from "./MonsterGame";
 import VirtualKeyboard from "./VirtualKeyboard";
@@ -139,12 +140,18 @@ export default function TypingTest() {
 
     }, [cursorIndex, words]);
 
+    const [isSafari, setIsSafari] = useState(false);
+
+    useEffect(() => {
+        setIsSafari(/^((?!chrome|android).)*safari/i.test(navigator.userAgent));
+    }, []);
+
     if (isGameMode) {
         return <MonsterGame onExit={() => setIsGameMode(false)} language={language} difficulty={difficulty} />;
     }
 
     return (
-        <div className={styles.wrapper}>
+        <div className={`${styles.wrapper} ${isSafari ? styles.safari : ''}`}>
             <div className={styles.header}>
                 <ConfigBar
                     language={language}
@@ -188,6 +195,8 @@ export default function TypingTest() {
                                 let className = styles.letter;
                                 if (letter.status === 'correct') className += ` ${styles.correct}`;
                                 if (letter.status === 'incorrect') className += ` ${styles.incorrect}`;
+                                const isCombining = isThaiCombiningChar(letter.char);
+                                if (isCombining) className += ` ${styles.combining}`;
 
                                 return (
                                     <span key={lIdx} className={className}>
