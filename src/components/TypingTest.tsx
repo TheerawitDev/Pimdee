@@ -115,23 +115,33 @@ export default function TypingTest() {
             const letterIndex = cursorIndex.letterIndex;
             const letters = currentWordEl.querySelectorAll(`.${styles.letter}`);
 
+            // Caret must be on the right of latest correct/incorrect letter element
+            const lettersEle = currentWordEl.children;
+            let caretPos = 0 // 0 (left) by default
+
+            for (let i = lettersEle.length - 1; i >= 0; i--) {
+                const el = lettersEle[i]
+                if (el.tagName === "SPAN" && 
+                    el.className.includes("correct") ||
+                    el.className.includes("incorrect")
+                ) {
+                    caretPos = i
+                    break
+                }
+            }
+            
             let targetLeft = 0;
             let targetTop = 0;
             let height = 0;
 
-            if (letters.length > 0 && letterIndex < letters.length) {
-                const targetLetter = letters[letterIndex] as HTMLElement;
-                targetLeft = currentWordEl.offsetLeft + targetLetter.offsetLeft;
-                targetTop = currentWordEl.offsetTop + targetLetter.offsetTop;
-                height = targetLetter.offsetHeight;
-            } else if (letters.length > 0) {
-                const lastLetter = letters[letters.length - 1] as HTMLElement;
-                targetLeft = currentWordEl.offsetLeft + lastLetter.offsetLeft + lastLetter.offsetWidth;
-                targetTop = currentWordEl.offsetTop + lastLetter.offsetTop;
-                height = lastLetter.offsetHeight;
-            } else {
-                targetLeft = currentWordEl.offsetLeft;
-                targetTop = currentWordEl.offsetTop;
+            if (cursorIndex.letterIndex > 0) { // Middle or end
+                const targetLetter = lettersEle[caretPos] as HTMLElement
+                targetLeft = currentWordEl.offsetLeft + targetLetter.offsetLeft + targetLetter.offsetWidth
+                targetTop = currentWordEl.offsetTop + targetLetter.offsetTop
+                height = targetLetter.offsetHeight
+            } else { // Start
+                targetLeft = currentWordEl.offsetLeft
+                targetTop = currentWordEl.offsetTop
                 height = currentWordEl.clientHeight || 24;
             }
 
